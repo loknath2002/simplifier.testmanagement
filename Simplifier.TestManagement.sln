@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simplifier.TestManagement", "Simplifier.TestManagement\Simplifier.TestManagement.csproj", "{DF29514A-62B8-4AD9-8D90-B64EFC7FB345}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simplifier.TestManagement.Tests", "Simplifier.TestManagement.Tests\Simplifier.TestManagement.Tests.csproj", "{00760EDA-516C-410D-9B5D-B6EF5CD924F9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DF29514A-62B8-4AD9-8D90-B64EFC7FB345}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF29514A-62B8-4AD9-8D90-B64EFC7FB345}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF29514A-62B8-4AD9-8D90-B64EFC7FB345}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF29514A-62B8-4AD9-8D90-B64EFC7FB345}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00760EDA-516C-410D-9B5D-B6EF5CD924F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00760EDA-516C-410D-9B5D-B6EF5CD924F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00760EDA-516C-410D-9B5D-B6EF5CD924F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00760EDA-516C-410D-9B5D-B6EF5CD924F9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
