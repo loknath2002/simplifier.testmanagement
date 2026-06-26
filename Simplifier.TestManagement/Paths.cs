@@ -23,11 +23,14 @@ namespace Simplifier.TestManagement
         public static string LogDirectory { get; } = Path.Combine(Paths.AppDataRoot, "Logs");
 
         public static string LogFilePath { get; } = Path.Combine(Paths.LogDirectory, "STestMgmt.log");
+        
+        public static string TempPath { get; } = Path.Combine(Paths.AppDataRoot, "Temp");
 
         private static void EnsureDirectoriesExist()
         {
             Directory.CreateDirectory(Paths.AppDataRoot);
             Directory.CreateDirectory(Paths.LogDirectory);
+            Directory.CreateDirectory(Paths.TempPath);
         }
     }
 }

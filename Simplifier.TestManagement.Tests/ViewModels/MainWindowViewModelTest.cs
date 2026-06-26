@@ -11,11 +11,5 @@ namespace Simplifier.TestManagement.Tests.ViewModels
     [TestOf(typeof(MainWindowViewModel))]
     public class MainWindowViewModelTest
     {
-
-        [Test]
-        public void METHOD()
-        {
-            Assert.Fail();
-        }
     }
 }

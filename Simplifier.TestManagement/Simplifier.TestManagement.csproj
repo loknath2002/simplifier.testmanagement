@@ -22,8 +22,15 @@
             <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
         </PackageReference>
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+        <PackageReference Include="MarkdownBuilder" Version="1.0.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
         <PackageReference Include="Simplifier.Serilog" Version="1.0.4" />
         <PackageReference Include="SukiUI" Version="7.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>Simplifier.TestManagement.Tests</_Parameter1>
+        </AssemblyAttribute>
     </ItemGroup>
 </Project>
