@@ -21,7 +21,10 @@ public enum ReadExceptionTypes
     MissingTestDatasetRegion,
     MissingTestStepsAndExpectedRegion,
     CorruptTestStepsAndResultsTable,
-    CorruptTestStepsAndResultsRow
+    CorruptTestStepsAndResultsRow,
+    MissingRunHistoryRegion,
+    CorruptTestRunHistoryRow,
+    CorruptTestRunTitleCorrupt,
 }
 public class TestCaseReadException : Exception
 {

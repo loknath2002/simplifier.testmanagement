@@ -2,13 +2,6 @@
 // * Copyright (c) 2026 Loknath, Quantum Technology
 // * All rights reserved.
 // */
-#region Using statements
-
-#endregion
-namespace Simplifier.TestManagement.Services;
-
-#region Using statements
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -17,14 +10,20 @@ using System.Linq;
 using System.Text;
 using Markdown;
 using Simplifier.TestManagement.Models;
+namespace Simplifier.TestManagement.Services;
+
+#region Using statements
+
+
 
 #endregion
 
 public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
 {
-#region Fields
 
-    private const string aDateFormat = "dd-MMM-yyyy";
+    #region Fields
+
+    private const string DateFormat = "dd-MMM-yyyy";
     private const string AuthorTag = "Author";
     private const string DatasetTag = "Dataset";
     private const string DateTag = "Date";
@@ -36,11 +35,13 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
     private const string StepsAndExpectedResultsTag = "Steps & Expected Results";
     private const string TagsTag = "Tags";
     private const string TCPrefix = "TC-";
+    private const string RunPrefix = "Run-";
 
     private readonly MarkdownDocument myDocument = new MarkdownDocument();
 
-#endregion
-#region ITestCaseRenderer Members
+    #endregion
+
+    #region ITestCaseRenderer Members
 
     public TestCaseModel Read(TestCaseTarget theModelToRead)
     {
@@ -52,6 +53,7 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
         string aDataHeader = $"## {DatasetTag}";
         string aStepsAndResultsHeader = $"## {StepsAndExpectedResultsTag}";
         string aRunHistoryHeader = $"## {RunHistoryTag}";
+        string aInternalProgramDataHeader = $"#### {InternalProgramDataTag}";
 
 
         string aTitleAndMetaRegion = GetRegion(aLines, $"# {TCPrefix}", aDescHeader, ReadExceptionTypes.MissingTestTitleAndMetaRegion);
@@ -69,11 +71,98 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
 
         string aStepsRegion = GetRegion(aLines, aStepsAndResultsHeader, aRunHistoryHeader, ReadExceptionTypes.MissingTestStepsAndExpectedRegion);
         ExtractStepResultsTable(aStepsRegion, aModel);
-        
-        
-        string aRunHistoryRegion = GetRegion(aLines, aRunHistoryHeader, aRunHistoryHeader, ReadExceptionTypes.MissingTestStepsAndExpectedRegion);
+
+
+        string aRunHistoryRegion = GetRegion(aLines, aRunHistoryHeader, aInternalProgramDataHeader, ReadExceptionTypes.MissingRunHistoryRegion);
         ExtractAllTestRunHistory(aRunHistoryRegion, aModel);
         return aModel;
+    }
+
+    private void ExtractStepForRunHistory(string theStepsRegion, TestCaseModel theModel, DateOnly theDate)
+    {
+        string[] theLines = theStepsRegion.Split(NewLineExtensions.EOLC);
+        List<List<string>> aTableColumns = new List<List<string>>();
+        GetTableData(theLines, aTableColumns);
+        if (!aTableColumns.Any())
+        {
+            return;
+        }
+
+        if (aTableColumns[0].Count != 3)
+        {
+            throw new TestCaseReadException(ReadExceptionTypes.CorruptTestStepsAndResultsTable);
+        }
+
+        var aTestRun = new TestRun(theDate);
+        foreach (List<string> aRow in aTableColumns)
+        {
+            if (!int.TryParse(aRow[0], out int aRowIndex))
+            {
+                throw new TestCaseReadException(ReadExceptionTypes.CorruptTestRunHistoryRow, string.Join(',', aRow));
+            }
+
+            if (!Enum.TryParse(aRow[1], out TestStepStatus aStatus))
+            {
+                throw new TestCaseReadException(ReadExceptionTypes.CorruptTestRunHistoryRow, string.Join(',', aRow));
+            }
+
+            aTestRun.Results.Add(new TestStepResultModel(aRowIndex, aStatus) { Note = aRow[2] });
+        }
+
+        theModel.TestRuns.Add(aTestRun);
+    }
+
+    private void ExtractAllTestRunHistory(string theHistoryRegion, TestCaseModel theModel)
+    {
+        string[] aLines = theHistoryRegion.Split(NewLineExtensions.EOLC);
+        List<string> aRunMarkers = new List<string>();
+        foreach (string aLine in aLines)
+        {
+            if (aLine.StartsWith($"### {RunPrefix}", StringComparison.Ordinal))
+            {
+                aRunMarkers.Add(aLine);
+            }
+        }
+
+        for (int i = 0; i < aRunMarkers.Count - 1; i++)
+        {
+            string aStepsRegion = GetRegion(aLines, aRunMarkers[i], aRunMarkers[i + 1], ReadExceptionTypes.MissingRunHistoryRegion);
+            ExtractStepForRunHistory(aStepsRegion, theModel, ReadOutDateFromHistoryTitle(aRunMarkers[i]));
+        }
+
+        string aLeftOut = aRunMarkers.Last();
+        var aBuilder = new StringBuilder();
+        bool aStartAppending = false;
+        foreach (string aLine in aLines)
+        {
+            if (aLine == aLeftOut)
+            {
+                aStartAppending = true;
+            }
+
+            if (aStartAppending)
+            {
+                aBuilder.Append($"{aLine}{NewLineExtensions.EOLC}");
+            }
+        }
+
+        ExtractStepForRunHistory(aBuilder.ToString(), theModel, ReadOutDateFromHistoryTitle(aLeftOut));
+    }
+    
+    private static DateOnly ReadOutDateFromHistoryTitle(string theLine)
+    {
+
+        string []aParts = theLine.Split(':', StringSplitOptions.RemoveEmptyEntries);
+        if (aParts.Length != 2)
+        {
+            throw new TestCaseReadException(ReadExceptionTypes.CorruptTestRunTitleCorrupt, theLine);
+        }
+
+        if (!DateOnly.TryParseExact(aParts[1].Trim(), DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly aDate))
+        {
+            throw new TestCaseReadException(ReadExceptionTypes.CorruptTestRunTitleCorrupt, theLine);
+        }
+        return aDate;
     }
 
 
@@ -83,10 +172,10 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
 
         myDocument.Append(new MarkdownBlockquote(
             new MarkdownParagraph($"{AuthorTag}: {theModelToSave.MetaData.Author}"),
-            new MarkdownParagraph($"{DateTag}: {theModelToSave.MetaData.Date.ToString(aDateFormat)}"),
+            new MarkdownParagraph($"{DateTag}: {theModelToSave.MetaData.Date.ToString(DateFormat)}"),
             new MarkdownParagraph($"{TagsTag}: {string.Join(',', theModelToSave.MetaData.Tags)}"),
             new MarkdownParagraph($"{StatusTag}: {string.Join(',', theModelToSave.MetaData.Status)}")
-            ));
+        ));
 
         myDocument.Append(new MarkdownHeader(DescriptionTag, 2));
         myDocument.AppendParagraph(theModelToSave.Description);
@@ -114,9 +203,10 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
 
         {
             myDocument.Append(new MarkdownHeader(RunHistoryTag, 2));
+            int aRunNumber = theModelToSave.TestRuns.Count;
             foreach (TestRun aRun in theModelToSave.TestRuns)
             {
-                myDocument.Append(new MarkdownHeader($"{aRun.When.ToString(aDateFormat)}", 3));
+                myDocument.Append(new MarkdownHeader($"{RunPrefix}{aRunNumber.ToString(CultureInfo.InvariantCulture)}: {aRun.When.ToString(DateFormat)}", 3));
                 List<MarkdownTableRow> aResultTableRows = [];
                 foreach (TestStepResultModel aResult in aRun.Results)
                 {
@@ -128,6 +218,8 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
                         new MarkdownTableHeaderCell("Status"),
                         new MarkdownTableHeaderCell("Notes")),
                     aResultTableRows);
+
+                aRunNumber--;
             }
         }
 
@@ -136,14 +228,15 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
             myDocument.Append(new MarkdownBlockquote(
                 new MarkdownParagraph("Program Used: Super Simple Test Management (SSTM)"),
                 new MarkdownParagraph("SchemaVersion: SSTM1")
-                ));
+            ));
         }
 
         return new TestCaseTarget(myDocument.ToPrettyString().ToUnixEol(), theModelToSave.StoragePath());
     }
 
-#endregion
-#region Members
+    #endregion
+
+    #region Members
 
     private static void ExtractTestIDAndTitle(string aTitleAndMetaRegion, TestCaseModel aModel)
     {
@@ -253,7 +346,7 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
 
             if (i == 1)
             {
-                if (!DateOnly.TryParseExact(aParts[1].Trim(), aDateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly aDate))
+                if (!DateOnly.TryParseExact(aParts[1].Trim(), DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly aDate))
                 {
                     throw new TestCaseReadException(ReadExceptionTypes.CorruptTestDate);
                 }
@@ -313,7 +406,7 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
         int aEndIndex = -1;
         for (int i = 0; i < theLines.Length; i++)
         {
-            if (theLines[i].StartsWith(thePrefix1, StringComparison.InvariantCulture) && aStartIndex == -1)
+            if (theLines[i].StartsWith(thePrefix1, StringComparison.InvariantCulture))
             {
                 aStartIndex = i;
                 break;
@@ -348,5 +441,6 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
         return aBuilder.ToString();
     }
 
-#endregion
+    #endregion
+
 }

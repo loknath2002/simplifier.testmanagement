@@ -35,7 +35,7 @@ Test case data goes here.
 
 ## Run History
 
-### 01-Jan-2021
+### Run-2: 01-Jan-2021
 
 | Step | Status  | Notes           |
 | ---- | ------- | --------------- |
@@ -44,7 +44,7 @@ Test case data goes here.
 | 3    | Started |                 |
 | 4    | Pending |                 |
 
-### 01-Jan-2020
+### Run-1: 01-Jan-2020
 
 | Step | Status | Notes |
 | ---- | ------ | ----- |

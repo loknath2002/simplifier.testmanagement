@@ -53,8 +53,24 @@ public class MarkdownReadAndWriteImplV1Test
             new TestStepModel(3, "Enter valid `username` and `password` from Test Data.", "Characters are masked in the password field. Login button becomes active."),
             new TestStepModel(4, "Click the \"Login\" button.", "User is redirected to the dashboard. Session token is stored locally.")
         }));
+
+        Assert.That(aActual.TestRuns[0].When, Is.EqualTo(new DateOnly(2021, 01, 01)));
+        Assert.That(aActual.TestRuns[1].When, Is.EqualTo(new DateOnly(2020, 01, 01)));
+        Assert.That(aActual.TestRuns[0].Results, Is.EqualTo(new ObservableCollection<TestStepResultModel>()
+        {
+            new TestStepResultModel(1, TestStepStatus.Pass),
+            new TestStepResultModel(2, TestStepStatus.Fail) { Note = "2nd login fails" },
+            new TestStepResultModel(3, TestStepStatus.Started),
+            new TestStepResultModel(4, TestStepStatus.Pending),
+        }));
         
-        
+        Assert.That(aActual.TestRuns[1].Results, Is.EqualTo(new ObservableCollection<TestStepResultModel>()
+        {
+            new TestStepResultModel(1, TestStepStatus.Pass),
+            new TestStepResultModel(2, TestStepStatus.Pass),
+            new TestStepResultModel(3, TestStepStatus.Pass),
+            new TestStepResultModel(4, TestStepStatus.Pass),
+        }));
     }
     
     [Test]
@@ -102,7 +118,7 @@ public class MarkdownReadAndWriteImplV1Test
         }
         
         var aRenderer = new MarkdownReadAndWriteImplV1();
-        string aFileContents = File.ReadAllText(Path.Combine("TestFiles", $"{nameof(Verify_V1_TestCaseRenderer_Writes_Valid_Markdown)}.md"));
+        string aFileContents = File.ReadAllText(Path.Combine("TestFiles", $"{nameof(Verify_V1_TestCaseRenderer_Writes_Valid_Markdown)}.md")).ToUnixEol();
         var aExpected = aRenderer.Write(aModel);
         Assert.That(aExpected.Content, Is.EqualTo(aFileContents));
         Assert.That(aExpected.FileName, Is.EqualTo("TestProject/TC_1_Test_Case_1.md"));
