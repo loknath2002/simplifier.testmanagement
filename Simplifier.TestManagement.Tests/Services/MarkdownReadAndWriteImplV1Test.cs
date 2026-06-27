@@ -9,6 +9,8 @@ using Simplifier.TestManagement.Models;
 using Simplifier.TestManagement.Services;
 namespace Simplifier.TestManagement.Tests.Services;
 
+using System.Collections.ObjectModel;
+
 [TestFixture]
 [TestOf(typeof(MarkdownReadAndWriteImplV1))]
 public class MarkdownReadAndWriteImplV1Test
@@ -17,7 +19,7 @@ public class MarkdownReadAndWriteImplV1Test
     public void Verify_V1_TestCaseRenderer_Reads_Valid_Markdown()
     {
         var aRenderer = new MarkdownReadAndWriteImplV1();
-        string aFileContents = File.ReadAllText(Path.Combine("TestFiles", $"{nameof(Verify_V1_TestCaseRenderer_Reads_Valid_Markdown)}.md"));
+        string aFileContents = File.ReadAllText(Path.Combine("TestFiles", $"{nameof(Verify_V1_TestCaseRenderer_Reads_Valid_Markdown)}.md")).ToUnixEol();
         TestCaseModel aActual = aRenderer.Read(new TestCaseTarget(aFileContents, "RandomPath/TestProject/TC_1_Test_Case_1.md"));
         Assert.That(aActual.Id, Is.EqualTo("1"));
         Assert.That(aActual.Name, Is.EqualTo("Test Case 1"));
@@ -25,6 +27,34 @@ public class MarkdownReadAndWriteImplV1Test
         Assert.That(aActual.MetaData.Date, Is.EqualTo(new DateOnly(2020, 01, 01)));
         Assert.That(aActual.MetaData.Tags, Is.EqualTo(["Tag1", "Tag2"]));
         Assert.That(aActual.MetaData.Status, Is.EqualTo(TestCaseStatus.Draft));
+        Assert.That(aActual.Description, Is.EqualTo("""
+                                                    Test case description goes here.
+                                                    SecondLine of description.
+                                                    * User is logged out.
+                                                    * System is in a known state.
+                                                    """.ToUnixEol()));
+        Assert.That(aActual.Precondition, Is.EqualTo("""
+                                                    Test case preconditions go here.
+                                                    * User is logged out.
+                                                    * System is in a known state.
+                                                    """.ToUnixEol()));
+        
+        
+        Assert.That(aActual.TestData, Is.EqualTo("""
+                                                     Test case data goes here.
+                                                     * Username:something
+                                                     * Password:something
+                                                     """.ToUnixEol()));
+        
+        Assert.That(aActual.Steps, Is.EqualTo(new ObservableCollection<TestStepModel>()
+        {
+            new TestStepModel(1, "Navigate to the application login screen.", "Login form is displayed with Username and Password fields."),
+            new TestStepModel(2, "Navigate to the application login screen.", "Login form is displayed with Username and Password fields."),
+            new TestStepModel(3, "Enter valid `username` and `password` from Test Data.", "Characters are masked in the password field. Login button becomes active."),
+            new TestStepModel(4, "Click the \"Login\" button.", "User is redirected to the dashboard. Session token is stored locally.")
+        }));
+        
+        
     }
     
     [Test]

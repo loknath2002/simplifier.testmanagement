@@ -16,10 +16,21 @@ public enum ReadExceptionTypes
     CorruptTestDate,
     CorruptTestTags,
     CorruptTestStatus,
+    MissingTestDescriptionRegion,
+    MissingTestPreconditionRegion,
+    MissingTestDatasetRegion,
+    MissingTestStepsAndExpectedRegion,
+    CorruptTestStepsAndResultsTable,
+    CorruptTestStepsAndResultsRow
 }
 public class TestCaseReadException : Exception
 {
-    public TestCaseReadException(ReadExceptionTypes theExceptionTypes) : base($"Test case read exception: {theExceptionTypes}")
+    public TestCaseReadException(ReadExceptionTypes theExceptionTypes, string theExtraMessage) : base($"Test case read exception: {theExceptionTypes} Extra : {theExtraMessage}")
+    {
+        
+    }
+    
+    public TestCaseReadException(ReadExceptionTypes theExceptionTypes) : this(theExceptionTypes, string.Empty)
     {
         
     }
