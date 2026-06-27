@@ -5,6 +5,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 namespace Simplifier.TestManagement.Models;
@@ -19,6 +20,15 @@ public partial class TestCaseMetadataModel : ObservableValidator
 
     [ObservableProperty]
     private ObservableCollection<string> _Tags = [];
+
+    public string TagsString
+    {
+        get => string.Join(", ", Tags);
+        set
+        {
+            Tags = new ObservableCollection<string>(value.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(t => t.Trim()).ToList());
+        }
+    }
 
     [ObservableProperty]
     private TestCaseStatus _Status = TestCaseStatus.Draft;

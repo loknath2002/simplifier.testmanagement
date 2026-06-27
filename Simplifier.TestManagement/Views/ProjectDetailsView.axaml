@@ -3,15 +3,66 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:suki="https://github.com/kikipoulet/SukiUI"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Simplifier.TestManagement.Views.ProjectDetailsView">
+             xmlns:vm="using:Simplifier.TestManagement.ViewModels"
+             xmlns:models="using:Simplifier.TestManagement.Models"
+             mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
+             x:Class="Simplifier.TestManagement.Views.ProjectDetailsView"
+             x:DataType="vm:ProjectDetailsViewModel">
     <TabControl>
         <TabItem Header="Organize">
             <Grid
-                ColumnDefinitions="*, 4, *">
-                <Rectangle Grid.Column="0" Fill="Blue"/>
+                ColumnDefinitions="3*, 4, 7*">
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <ListBox ItemsSource="{Binding Tests}" SelectedItem="{Binding SelectedTestCase}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:TestCaseModel">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Id, StringFormat='TC-{0}'}" FontSize="10"/>
+                                    <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <Button Grid.Row="1" Content="Create New Test Case" Command="{Binding CreateNewTestCaseCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                </Grid>
                 <GridSplitter Grid.Column="1" Background="Black" ResizeDirection="Columns"/>
-                <Rectangle Grid.Column="2" Fill="Red"/>
+                <Grid Grid.Column="2" RowDefinitions="25*, 75*">
+                    <Grid Grid.Row="0" Margin="10" ColumnDefinitions="*, *" RowDefinitions="Auto, Auto, Auto, Auto, *">
+                         <TextBox Grid.Row="0" Grid.Column="0" Watermark="Test ID" Text="{Binding SelectedTestCase.Id}"/>
+                         <TextBox Grid.Row="0" Grid.Column="1" Watermark="Test Name" Text="{Binding SelectedTestCase.Name}"/>
+                         
+                         <TextBox Grid.Row="1" Grid.Column="0" Watermark="Author" Text="{Binding SelectedTestCase.MetaData.Author}"/>
+                         <TextBox Grid.Row="1" Grid.Column="1" Watermark="Date" Text="{Binding SelectedTestCase.MetaData.Date}"/>
+                         
+                         <TextBox Grid.Row="2" Grid.Column="0" Watermark="Status" Text="{Binding SelectedTestCase.MetaData.Status}"/>
+                         <TextBox Grid.Row="2" Grid.Column="1" Watermark="Revision" Text="{Binding SelectedTestCase.MetaData.Revision}"/>
+                         
+                         <TextBox Grid.Row="3" Grid.Column="0" Watermark="Tags" Text="{Binding SelectedTestCase.MetaData.TagsString}"/>
+                         
+                         <TextBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Watermark="Description" Text="{Binding SelectedTestCase.Description}"/>
+                    </Grid>
+                    <Grid Grid.Row="1" RowDefinitions="*, Auto">
+                        <TabControl Grid.Row="0" Margin="10">
+                            <TabItem Header="Precondition">
+                                <TextBox AcceptsReturn="True" TextWrapping="Wrap" Watermark="Preconditions" Text="{Binding SelectedTestCase.Precondition}"/>
+                            </TabItem>
+                            <TabItem Header="Steps">
+                                <TextBox AcceptsReturn="True" TextWrapping="Wrap" Watermark="Steps" Text="{Binding SelectedTestCase.Steps}"/>
+                            </TabItem>
+                            <TabItem Header="TestRuns">
+                                <TextBlock Text="Test Runs Content"/>
+                            </TabItem>
+                        </TabControl>
+                        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10, 0, 10, 10" Spacing="10">
+                            <Button Content="Save" Classes="Flat Rounded" Command="{Binding SaveTestCaseCommand}"/>
+                            <Button Content="Delete" Classes="Flat Rounded" Command="{Binding DeleteTestCaseCommand}"/>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
             </Grid>
         </TabItem>
         <TabItem Header="Run">

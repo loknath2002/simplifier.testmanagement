@@ -19,6 +19,9 @@ namespace Simplifier.TestManagement
             collection.AddSingleton<MainWindowViewModel>();
     
             collection.AddSingleton<IViewNavigation>(provider => provider.GetRequiredService<MainWindowViewModel>());
+            
+            collection.AddSingleton<ITestCaseRendererFactory, TestCaseRendererFactory>();
+            collection.AddSingleton<IStorageService, StorageServiceImpl>();
         }
     }
 }
