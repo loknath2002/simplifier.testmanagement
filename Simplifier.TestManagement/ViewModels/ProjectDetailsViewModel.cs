@@ -13,6 +13,7 @@ namespace Simplifier.TestManagement.ViewModels;
 public partial class ProjectDetailsViewModel : ViewModelBase
 {
     private readonly IStorageService _storageService;
+    private readonly ITestCaseRendererFactory _rendererFactory;
 
     [ObservableProperty]
     private ObservableCollection<TestCaseModel> _tests = new();
@@ -23,9 +24,10 @@ public partial class ProjectDetailsViewModel : ViewModelBase
     [ObservableProperty]
     private TestCaseModel? _selectedTestCase;
 
-    public ProjectDetailsViewModel(IStorageService storageService)
+    public ProjectDetailsViewModel(IStorageService storageService, ITestCaseRendererFactory rendererFactory)
     {
         _storageService = storageService;
+        _rendererFactory = rendererFactory;
     }
 
     public void LoadTests(TestProjectModel project)
@@ -37,13 +39,17 @@ public partial class ProjectDetailsViewModel : ViewModelBase
     [RelayCommand]
     private void CreateNewTestCase()
     {
-        // Implementation for creating a new test case
+        this.SelectedTestCase = new TestCaseModel(CurrentProject, new TestCaseMetadataModel());
     }
 
     [RelayCommand]
     private void SaveTestCase()
     {
-        // Implementation for saving a test case
+        if (SelectedTestCase == null) return;
+        var path = SelectedTestCase.StoragePath();
+        var renderer = _rendererFactory.Create(SelectedTestCase);
+        var target = renderer.Write(SelectedTestCase);
+        _storageService.Save(path, target.Content);
     }
 
     [RelayCommand]

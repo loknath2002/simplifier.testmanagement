@@ -16,6 +16,12 @@ public class ProjectDetailsViewModelTest
         public IEnumerable<TestCaseModel> Load(string theProjectDirectory) => Tests;
     }
 
+    public class MockRendererFactory : ITestCaseRendererFactory
+    {
+        public ITestCaseRenderer Create(TestCaseTarget theTarget) => throw new System.NotImplementedException();
+        public ITestCaseRenderer Create(TestCaseModel theModel) => throw new System.NotImplementedException();
+    }
+
     [Test]
     public void LoadTests_ShouldLoadTestsFromStorageService()
     {
@@ -29,7 +35,7 @@ public class ProjectDetailsViewModelTest
         };
         mockStorageService.Tests = tests;
         
-        var viewModel = new ProjectDetailsViewModel(mockStorageService);
+        var viewModel = new ProjectDetailsViewModel(mockStorageService, new MockRendererFactory());
         
         // Act
         viewModel.LoadTests(project);

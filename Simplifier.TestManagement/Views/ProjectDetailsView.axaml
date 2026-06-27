@@ -11,7 +11,7 @@
     <TabControl>
         <TabItem Header="Organize">
             <Grid
-                ColumnDefinitions="3*, 4, 7*">
+                ColumnDefinitions="20*, 4, 80*">
                 <Grid Grid.Column="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>

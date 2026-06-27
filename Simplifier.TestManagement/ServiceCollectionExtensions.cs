@@ -22,6 +22,7 @@ namespace Simplifier.TestManagement
             
             collection.AddSingleton<ITestCaseRendererFactory, TestCaseRendererFactory>();
             collection.AddSingleton<IStorageService, StorageServiceImpl>();
+            collection.AddSingleton<IDialogService, DialogService>();
         }
     }
 }
