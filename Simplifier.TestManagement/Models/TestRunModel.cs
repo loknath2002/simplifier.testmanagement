@@ -63,7 +63,7 @@ public partial class TestRun : ObservableValidator
     private ObservableCollection<TestStepResultModel> _Results = [];
 
     [ObservableProperty]
-    private DateOnly _When = DateOnly.MinValue;
+    private DateOnly _When = DateOnly.FromDateTime(DateTime.Now);
 
     public TestRun(DateOnly theWhen)
     {

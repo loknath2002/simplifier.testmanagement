@@ -5,62 +5,134 @@
              xmlns:suki="https://github.com/kikipoulet/SukiUI"
              xmlns:vm="using:Simplifier.TestManagement.ViewModels"
              xmlns:models="using:Simplifier.TestManagement.Models"
+             xmlns:converters="using:Simplifier.TestManagement.Converters"
              mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
              x:Class="Simplifier.TestManagement.Views.ProjectDetailsView"
              x:DataType="vm:ProjectDetailsViewModel">
+    <UserControl.Resources>
+        <converters:DateOnlyToDateTimeOffsetConverter x:Key="DateOnlyToDateTimeOffsetConverter" />
+    </UserControl.Resources>
     <TabControl>
         <TabItem Header="Organize">
             <Grid
                 ColumnDefinitions="20*, 4, 80*">
                 <Grid Grid.Column="0">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <ListBox ItemsSource="{Binding Tests}" SelectedItem="{Binding SelectedTestCase}">
                         <ListBox.ItemTemplate>
                             <DataTemplate x:DataType="models:TestCaseModel">
                                 <StackPanel>
-                                    <TextBlock Text="{Binding Id, StringFormat='TC-{0}'}" FontSize="10"/>
-                                    <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Id, StringFormat='TC-{0}'}" FontSize="10" />
+                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" />
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <Button Grid.Row="1" Content="Create New Test Case" Command="{Binding CreateNewTestCaseCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                    <Button Grid.Row="1" Content="Create New Test Case" Command="{Binding CreateNewTestCaseCommand}"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
                 </Grid>
-                <GridSplitter Grid.Column="1" Background="Black" ResizeDirection="Columns"/>
-                <Grid Grid.Column="2" RowDefinitions="25*, 75*">
-                    <Grid Grid.Row="0" Margin="10" ColumnDefinitions="*, *" RowDefinitions="Auto, Auto, Auto, Auto, *">
-                         <TextBox Grid.Row="0" Grid.Column="0" Watermark="Test ID" Text="{Binding SelectedTestCase.Id}"/>
-                         <TextBox Grid.Row="0" Grid.Column="1" Watermark="Test Name" Text="{Binding SelectedTestCase.Name}"/>
-                         
-                         <TextBox Grid.Row="1" Grid.Column="0" Watermark="Author" Text="{Binding SelectedTestCase.MetaData.Author}"/>
-                         <TextBox Grid.Row="1" Grid.Column="1" Watermark="Date" Text="{Binding SelectedTestCase.MetaData.Date}"/>
-                         
-                         <TextBox Grid.Row="2" Grid.Column="0" Watermark="Status" Text="{Binding SelectedTestCase.MetaData.Status}"/>
-                         <TextBox Grid.Row="2" Grid.Column="1" Watermark="Revision" Text="{Binding SelectedTestCase.MetaData.Revision}"/>
-                         
-                         <TextBox Grid.Row="3" Grid.Column="0" Watermark="Tags" Text="{Binding SelectedTestCase.MetaData.TagsString}"/>
-                         
-                         <TextBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Watermark="Description" Text="{Binding SelectedTestCase.Description}"/>
-                    </Grid>
-                    <Grid Grid.Row="1" RowDefinitions="*, Auto">
-                        <TabControl Grid.Row="0" Margin="10">
-                            <TabItem Header="Precondition">
-                                <TextBox AcceptsReturn="True" TextWrapping="Wrap" Watermark="Preconditions" Text="{Binding SelectedTestCase.Precondition}"/>
-                            </TabItem>
-                            <TabItem Header="Steps">
-                                <TextBox AcceptsReturn="True" TextWrapping="Wrap" Watermark="Steps" Text="{Binding SelectedTestCase.Steps}"/>
-                            </TabItem>
-                            <TabItem Header="TestRuns">
-                                <TextBlock Text="Test Runs Content"/>
-                            </TabItem>
-                        </TabControl>
-                        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10, 0, 10, 10" Spacing="10">
-                            <Button Content="Save" Classes="Flat Rounded" Command="{Binding SaveTestCaseCommand}"/>
-                            <Button Content="Delete" Classes="Flat Rounded" Command="{Binding DeleteTestCaseCommand}"/>
-                        </StackPanel>
+                <GridSplitter Grid.Column="1" Background="Black" ResizeDirection="Columns" />
+                <Grid Grid.Column="2">
+                    <!-- Placeholder when no test case is selected -->
+                    <StackPanel IsVisible="{Binding SelectedTestCase, Converter={x:Static ObjectConverters.IsNull}}"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Spacing="20">
+                        <suki:GlassCard>
+                            <StackPanel Spacing="10" Margin="20">
+                                <TextBlock Text="No Test Case Selected"
+                                           FontSize="20"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center" />
+                                <TextBlock
+                                    Text="Please select a test case from the list on the left or create a new test."
+                                    TextWrapping="Wrap"
+                                    MaxWidth="400"
+                                    HorizontalAlignment="Center"
+                                    TextAlignment="Center"
+                                    Foreground="Gray" />
+                            </StackPanel>
+                        </suki:GlassCard>
+                    </StackPanel>
+
+                    <!-- Editor UI visible when a test case is selected -->
+                    <Grid RowDefinitions="25*, 75*"
+                          IsVisible="{Binding SelectedTestCase, Converter={x:Static ObjectConverters.IsNotNull}}">
+                        <Grid Grid.Row="0" Margin="10" ColumnDefinitions="*, *"
+                              RowDefinitions="Auto, Auto, Auto, Auto, *">
+                            <TextBox Grid.Row="0" Grid.Column="0" suki:TextBoxExtensions.Prefix="TC-"
+                                     PlaceholderText="Test ID (Required)"
+                                     Text="{Binding SelectedTestCase.Id}" Margin="5"  />
+                            <TextBox Grid.Row="0" Grid.Column="1" PlaceholderText="Test Name (Required)"
+                                     Text="{Binding SelectedTestCase.Name}" Margin="5" />
+
+                            <ComboBox Grid.Row="1" Grid.Column="0" PlaceholderText="Author" ItemsSource="{Binding AllTestAuthors}"
+                                     SelectedItem="{Binding SelectedTestCase.MetaData.Author}" Text="{Binding SelectedTestCase.MetaData.Author}" Margin="5" IsEditable="True" />
+                            <CalendarDatePicker Grid.Row="1" Grid.Column="1" PlaceholderText="Date"
+                                                SelectedDate="{Binding SelectedTestCase.MetaData.Date, Converter={StaticResource DateOnlyToDateTimeOffsetConverter}}"
+                                                HorizontalAlignment="Stretch" Margin="5" />
+
+                            <ComboBox Grid.Row="2" Grid.Column="0" PlaceholderText="Status"
+                                      ItemsSource="{Binding TestCaseStatuses}"
+                                      SelectedItem="{Binding SelectedTestCase.MetaData.Status}"
+                                      HorizontalAlignment="Stretch" />
+                            <NumericUpDown IsEnabled="False" Grid.Row="2" Grid.Column="1"
+                                           Increment="1"
+                                           Value="{Binding SelectedTestCase.MetaData.Revision}"
+                                           HorizontalAlignment="Stretch" />
+
+                            <TextBox Grid.Row="3" Grid.Column="0" PlaceholderText="Tags"
+                                     Text="{Binding SelectedTestCase.MetaData.TagsString}" Margin="5" />
+
+                            <TextBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" PlaceholderText="Description"
+                                     Text="{Binding SelectedTestCase.Description}" Margin="5" />
+                        </Grid>
+                        <Grid Grid.Row="1" RowDefinitions="*, Auto">
+                            <TabControl Grid.Row="0" Margin="10">
+                                <TabItem Header="Precondition/s">
+                                    <TextBox AcceptsReturn="True" VerticalContentAlignment="Top" TextWrapping="Wrap"
+                                             PlaceholderText="Precondition/s"
+                                             Text="{Binding SelectedTestCase.Precondition}" />
+                                </TabItem>
+                                <TabItem Header="Steps">
+                                    <Grid RowDefinitions="*, Auto">
+                                        <ListBox Grid.Row="0" ItemsSource="{Binding SelectedTestCase.Steps}">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate x:DataType="models:TestStepModel">
+                                                    <Grid ColumnDefinitions="Auto, *, *, Auto" Margin="5">
+                                                        <NumericUpDown Grid.Column="0" Value="{Binding Number}"
+                                                                       Width="80" VerticalAlignment="Center" />
+                                                        <TextBox Grid.Column="1" Text="{Binding Procedure}"
+                                                                 PlaceholderText="Procedure" AcceptsReturn="True"
+                                                                 TextWrapping="Wrap" Margin="5,0" />
+                                                        <TextBox Grid.Column="2" Text="{Binding ExpectedResult}"
+                                                                 PlaceholderText="Expected Result" AcceptsReturn="True"
+                                                                 TextWrapping="Wrap" Margin="5,0" />
+                                                        <Button Grid.Column="3" Content="Delete"
+                                                                Command="{Binding $parent[UserControl].((vm:ProjectDetailsViewModel)DataContext).RemoveStepCommand}"
+                                                                CommandParameter="{Binding}" Classes="Flat" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+                                        <Button Grid.Row="1" Content="Add Step" Command="{Binding AddStepCommand}"
+                                                HorizontalAlignment="Right" Margin="5" />
+                                    </Grid>
+                                </TabItem>
+                                <TabItem Header="TestRuns">
+                                    <TextBlock Text="Test Runs Content" />
+                                </TabItem>
+                            </TabControl>
+                            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right"
+                                        Margin="10, 0, 10, 10" Spacing="10">
+                                <Button Content="Save" Classes="Flat Rounded" Command="{Binding SaveTestCaseCommand}" />
+                                <Button Content="Delete" Classes="Flat Rounded"
+                                        Command="{Binding DeleteTestCaseCommand}" />
+                            </StackPanel>
+                        </Grid>
                     </Grid>
                 </Grid>
             </Grid>

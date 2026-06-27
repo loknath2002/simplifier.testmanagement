@@ -92,7 +92,7 @@ Dataset
         var aResults = _service.Load(_tempDir).ToList();
         
         Assert.That(aResults.Count, Is.EqualTo(1));
-        Assert.That(aResults[0].Id, Is.EqualTo("1"));
+        Assert.That(aResults[0].Id, Is.EqualTo(1));
         Assert.That(aResults[0].Name, Is.EqualTo("Test Case"));
     }
 }

@@ -30,8 +30,8 @@ public class ProjectDetailsViewModelTest
         var project = new TestProjectModel("TestPath");
         var tests = new List<TestCaseModel>
         {
-            new TestCaseModel(project, new TestCaseMetadataModel()) { Id = "1", Name = "Test1" },
-            new TestCaseModel(project, new TestCaseMetadataModel()) { Id = "2", Name = "Test2" }
+            new TestCaseModel(project, new TestCaseMetadataModel()) { Id = 1, Name = "Test1" },
+            new TestCaseModel(project, new TestCaseMetadataModel()) { Id = 2, Name = "Test2" }
         };
         mockStorageService.Tests = tests;
         
