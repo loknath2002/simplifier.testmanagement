@@ -13,12 +13,12 @@ public partial class TestStepResultModel : ObservableValidator
     private int _StepNumber = -1;
     
     [ObservableProperty]
-    private TestStepRunStatus _Status = TestStepRunStatus.Pending;
+    private TestStepStatus _Status = TestStepStatus.Pending;
     
     [ObservableProperty]
     private string _Note = string.Empty;
 
-    public TestStepResultModel(int theStepNumber, TestStepRunStatus theStatus)
+    public TestStepResultModel(int theStepNumber, TestStepStatus theStatus)
     {
         this.StepNumber = theStepNumber;
         this.Status = theStatus;

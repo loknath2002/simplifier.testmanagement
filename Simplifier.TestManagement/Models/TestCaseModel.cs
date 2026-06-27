@@ -21,7 +21,10 @@ public partial class TestCaseMetadataModel : ObservableValidator
     private ObservableCollection<string> _Tags = [];
 
     [ObservableProperty]
-    private TestWriteStatus _Status = TestWriteStatus.Draft;
+    private TestCaseStatus _Status = TestCaseStatus.Draft;
+    
+    [ObservableProperty]
+    private int _Revision = -1;
 }
 
 public partial class TestCaseModel : ObservableValidator

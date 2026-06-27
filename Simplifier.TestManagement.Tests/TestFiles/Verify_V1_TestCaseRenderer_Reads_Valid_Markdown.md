@@ -1,6 +1,6 @@
 ﻿# TC-1: Test Case 1
 
-> Author: TestCaseWriter
+> Author: ##Description
 >
 > Date: 01-Jan-2020
 >
@@ -11,6 +11,9 @@
 ## Description
 
 Test case description goes here.
+SecondLine of description.
+* User is logged out.
+* System is in a known state.
 
 ## Preconditions
 

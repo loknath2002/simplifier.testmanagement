@@ -7,6 +7,8 @@ using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 namespace Simplifier.TestManagement.Models;
 
+using System;
+
 public partial class TestProjectModel : ObservableValidator
 {
     public TestProjectModel(string theDirectoryPath)

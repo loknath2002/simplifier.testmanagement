@@ -4,5 +4,6 @@
 // */
 namespace Simplifier.TestManagement.Models;
 
-public enum TestStepRunStatus { Pending, Started, Pass, Fail }
-public enum TestWriteStatus { Draft, Completed }
+public enum TestStepStatus { Pending, Started, Pass, Fail }
+
+public enum TestCaseStatus { Draft, Completed }

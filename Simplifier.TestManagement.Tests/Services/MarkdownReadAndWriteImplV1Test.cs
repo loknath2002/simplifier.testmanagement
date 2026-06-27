@@ -17,8 +17,14 @@ public class MarkdownReadAndWriteImplV1Test
     public void Verify_V1_TestCaseRenderer_Reads_Valid_Markdown()
     {
         var aRenderer = new MarkdownReadAndWriteImplV1();
-        string aFileContents = File.ReadAllText(Path.Combine("TestFiles", $"{nameof(Verify_V1_TestCaseRenderer_Writes_Valid_Markdown)}.md"));
-        aRenderer.Read(new TestCaseTarget(aFileContents, "TestProject/TC_1_Test_Case_1.md"));
+        string aFileContents = File.ReadAllText(Path.Combine("TestFiles", $"{nameof(Verify_V1_TestCaseRenderer_Reads_Valid_Markdown)}.md"));
+        TestCaseModel aActual = aRenderer.Read(new TestCaseTarget(aFileContents, "RandomPath/TestProject/TC_1_Test_Case_1.md"));
+        Assert.That(aActual.Id, Is.EqualTo("1"));
+        Assert.That(aActual.Name, Is.EqualTo("Test Case 1"));
+        Assert.That(aActual.MetaData.Author, Is.EqualTo("##Description"));
+        Assert.That(aActual.MetaData.Date, Is.EqualTo(new DateOnly(2020, 01, 01)));
+        Assert.That(aActual.MetaData.Tags, Is.EqualTo(["Tag1", "Tag2"]));
+        Assert.That(aActual.MetaData.Status, Is.EqualTo(TestCaseStatus.Draft));
     }
     
     [Test]
@@ -49,19 +55,19 @@ public class MarkdownReadAndWriteImplV1Test
 
         {
             var aRun = new TestRun(new DateOnly(2021, 01, 01));
-            aRun.Results.Add(new TestStepResultModel(1, TestStepRunStatus.Pass));
-            aRun.Results.Add(new TestStepResultModel(2, TestStepRunStatus.Fail) { Note = "2nd login fails" });
-            aRun.Results.Add(new TestStepResultModel(3, TestStepRunStatus.Started));
-            aRun.Results.Add(new TestStepResultModel(4, TestStepRunStatus.Pending));
+            aRun.Results.Add(new TestStepResultModel(1, TestStepStatus.Pass));
+            aRun.Results.Add(new TestStepResultModel(2, TestStepStatus.Fail) { Note = "2nd login fails" });
+            aRun.Results.Add(new TestStepResultModel(3, TestStepStatus.Started));
+            aRun.Results.Add(new TestStepResultModel(4, TestStepStatus.Pending));
             aModel.TestRuns.Add(aRun);
         }
 
         {
             var aRun = new TestRun(new DateOnly(2020, 01, 01));
-            aRun.Results.Add(new TestStepResultModel(1, TestStepRunStatus.Pass));
-            aRun.Results.Add(new TestStepResultModel(2, TestStepRunStatus.Pass));
-            aRun.Results.Add(new TestStepResultModel(3, TestStepRunStatus.Pass));
-            aRun.Results.Add(new TestStepResultModel(4, TestStepRunStatus.Pass));
+            aRun.Results.Add(new TestStepResultModel(1, TestStepStatus.Pass));
+            aRun.Results.Add(new TestStepResultModel(2, TestStepStatus.Pass));
+            aRun.Results.Add(new TestStepResultModel(3, TestStepStatus.Pass));
+            aRun.Results.Add(new TestStepResultModel(4, TestStepStatus.Pass));
             aModel.TestRuns.Add(aRun);
         }
         
