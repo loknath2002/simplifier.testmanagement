@@ -60,4 +60,4 @@ Test case data goes here.
 
 > Program Used: Super Simple Test Management (SSTM)
 >
-> SchemaVersion: 1
+> SchemaVersion: SSTM1

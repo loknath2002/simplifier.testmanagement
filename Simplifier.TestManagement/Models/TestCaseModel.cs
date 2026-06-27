@@ -29,6 +29,8 @@ public partial class TestCaseMetadataModel : ObservableValidator
 
 public partial class TestCaseModel : ObservableValidator
 {
+    public string SchemaVersion => ModelVersionConstants.SSTM1;
+    
     [ObservableProperty]
     private TestCaseMetadataModel _MetaData;
     

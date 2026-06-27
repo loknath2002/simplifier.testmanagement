@@ -227,7 +227,7 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
             myDocument.Append(new MarkdownHeader(InternalProgramDataTag, 4));
             myDocument.Append(new MarkdownBlockquote(
                 new MarkdownParagraph("Program Used: Super Simple Test Management (SSTM)"),
-                new MarkdownParagraph("SchemaVersion: SSTM1")
+                new MarkdownParagraph($"SchemaVersion: {theModelToSave.SchemaVersion}")
             ));
         }
 
