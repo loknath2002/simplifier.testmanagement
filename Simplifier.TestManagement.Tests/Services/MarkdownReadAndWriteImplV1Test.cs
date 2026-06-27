@@ -13,9 +13,16 @@ namespace Simplifier.TestManagement.Tests.Services;
 [TestOf(typeof(MarkdownReadAndWriteImplV1))]
 public class MarkdownReadAndWriteImplV1Test
 {
-
     [Test]
-    public void Verify_V1_TestCaseRenderer_Renders_Valid_Markdown()
+    public void Verify_V1_TestCaseRenderer_Reads_Valid_Markdown()
+    {
+        var aRenderer = new MarkdownReadAndWriteImplV1();
+        string aFileContents = File.ReadAllText(Path.Combine("TestFiles", $"{nameof(Verify_V1_TestCaseRenderer_Writes_Valid_Markdown)}.md"));
+        aRenderer.Read(new TestCaseTarget(aFileContents, "TestProject/TC_1_Test_Case_1.md"));
+    }
+    
+    [Test]
+    public void Verify_V1_TestCaseRenderer_Writes_Valid_Markdown()
     {
         TestCaseModel aModel = new TestCaseModel(new TestProjectModel("TestProject"), new TestCaseMetadataModel());
         aModel.Id = "1";
@@ -59,7 +66,7 @@ public class MarkdownReadAndWriteImplV1Test
         }
         
         var aRenderer = new MarkdownReadAndWriteImplV1();
-        string aFileContents = File.ReadAllText(Path.Combine("TestFiles", $"{nameof(Verify_V1_TestCaseRenderer_Renders_Valid_Markdown)}.md"));
+        string aFileContents = File.ReadAllText(Path.Combine("TestFiles", $"{nameof(Verify_V1_TestCaseRenderer_Writes_Valid_Markdown)}.md"));
         var aExpected = aRenderer.Write(aModel);
         Assert.That(aExpected.Content, Is.EqualTo(aFileContents));
         Assert.That(aExpected.FileName, Is.EqualTo("TestProject/TC_1_Test_Case_1.md"));

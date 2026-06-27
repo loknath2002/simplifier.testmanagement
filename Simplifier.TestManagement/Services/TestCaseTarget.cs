@@ -2,11 +2,18 @@
 // * Copyright (c) 2026 Loknath, Quantum Technology
 // * All rights reserved.
 // */
+using System.Diagnostics.CodeAnalysis;
 namespace Simplifier.TestManagement.Services;
 
 public class TestCaseTarget
 {
-    public required string Content { get; init; } = string.Empty;
+    public TestCaseTarget(string theContent, string theFileName)
+    {
+        Content = theContent;
+        FileName = theFileName;
+    }
     
-    public required string FileName { get; init; } = string.Empty;
+    public string Content { get; }
+    
+    public string FileName { get; }
 }

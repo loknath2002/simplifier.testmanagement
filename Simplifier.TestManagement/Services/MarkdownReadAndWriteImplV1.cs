@@ -2,16 +2,21 @@
 // * Copyright (c) 2026 Loknath, Quantum Technology
 // * All rights reserved.
 // */
+using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
+using Markdig;
+using Markdig.Syntax;
 using Markdown;
 using Simplifier.TestManagement.Models;
+using MarkdownDocument = Markdown.MarkdownDocument;
 namespace Simplifier.TestManagement.Services;
 
 public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
 {
     private readonly MarkdownDocument myDocument = new MarkdownDocument();
+
+    private readonly MarkdownPipeline myPipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
 
     public TestCaseTarget Write(TestCaseModel theModelToSave)
     {
@@ -75,14 +80,18 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
                 new MarkdownParagraph($"SchemaVersion: 1")
             ));
         }
-        return new TestCaseTarget()
-        {
-            Content = myDocument.ToPrettyString().Replace("\r\n", "\n"),
-            FileName = theModelToSave.StoragePath()
-        };
+        
+        return new TestCaseTarget(myDocument.ToPrettyString().Replace("\r\n", "\n"), theModelToSave.StoragePath());
     }
+    
     public TestCaseModel Read(TestCaseTarget theModelToRead)
     {
-        throw new System.NotImplementedException();
+        var aDocument = Markdig.Markdown.Parse(theModelToRead.Content);
+        foreach (var heading in aDocument.Descendants<QuoteBlock>())
+        {
+            Console.WriteLine($"Heading level {heading.ToString()}");
+        }
+
+        return null;
     }
 }
