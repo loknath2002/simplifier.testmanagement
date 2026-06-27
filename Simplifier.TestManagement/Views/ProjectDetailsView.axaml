@@ -65,12 +65,12 @@
                               RowDefinitions="Auto, Auto, Auto, Auto, *">
                             <TextBox Grid.Row="0" Grid.Column="0" suki:TextBoxExtensions.Prefix="TC-"
                                      PlaceholderText="Test ID (Required)"
-                                     Text="{Binding SelectedTestCase.Id}" Margin="5"  />
+                                     Text="{Binding SelectedTestCase.Id}" Margin="5" />
                             <TextBox Grid.Row="0" Grid.Column="1" PlaceholderText="Test Name (Required)"
                                      Text="{Binding SelectedTestCase.Name}" Margin="5" />
 
-                            <ComboBox Grid.Row="1" Grid.Column="0" PlaceholderText="Author" ItemsSource="{Binding AllTestAuthors}"
-                                     SelectedItem="{Binding SelectedTestCase.MetaData.Author}" Text="{Binding SelectedTestCase.MetaData.Author}" Margin="5" IsEditable="True" />
+                            <TextBox Grid.Row="1" Grid.Column="0" PlaceholderText="Author"
+                                     Text="{Binding SelectedTestCase.MetaData.Author}" Margin="5" />
                             <CalendarDatePicker Grid.Row="1" Grid.Column="1" PlaceholderText="Date"
                                                 SelectedDate="{Binding SelectedTestCase.MetaData.Date, Converter={StaticResource DateOnlyToDateTimeOffsetConverter}}"
                                                 HorizontalAlignment="Stretch" Margin="5" />

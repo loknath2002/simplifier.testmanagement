@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -27,9 +28,6 @@ public partial class ProjectDetailsViewModel : ViewModelBase
     [ObservableProperty]
     private ObservableCollection<TestCaseModel> _Tests = new ObservableCollection<TestCaseModel>();
     
-    [ObservableProperty]
-    private ObservableCollection<string> _AllTestAuthors = new ObservableCollection<string>();
-
     private LoggerDetail myLogDetail = new LoggerDetail(typeof(ProjectDetailsViewModel));
 
     public ProjectDetailsViewModel(IStorageService storageService, ITestCaseRendererFactory rendererFactory)
@@ -43,7 +41,6 @@ public partial class ProjectDetailsViewModel : ViewModelBase
     public void LoadTests(TestProjectModel project)
     {
         Tests.Clear();
-        AllTestAuthors.Clear();
         CurrentProject = project;
         Tests = new ObservableCollection<TestCaseModel>(myStorageService.Load(project.DirectoryPath));
         BuildIndexableIndex();
@@ -51,13 +48,7 @@ public partial class ProjectDetailsViewModel : ViewModelBase
     
     private void BuildIndexableIndex()
     {
-        foreach (var aAuthor in Tests.Where(x => !string.IsNullOrWhiteSpace(x.MetaData.Author)).Select(X => X.MetaData.Author))
-        {
-            if (!AllTestAuthors.Contains(aAuthor))
-            {
-                AllTestAuthors.Add(aAuthor);
-            }
-        }
+        
     }
 
     [RelayCommand]
@@ -68,25 +59,25 @@ public partial class ProjectDetailsViewModel : ViewModelBase
             return;
         }
         
-        SelectedTestCase = new TestCaseModel(CurrentProject, new TestCaseMetadataModel());
-        // Setup metadata
+        var aNewTestCase = new TestCaseModel(CurrentProject, new TestCaseMetadataModel());
         {
-            SelectedTestCase.MetaData.Revision++;
-            SelectedTestCase.MetaData.Date = DateOnly.FromDateTime(DateTime.Now);
-            SelectedTestCase.MetaData.Status = TestCaseStatus.Draft;
+            aNewTestCase.MetaData.Revision++;
+            aNewTestCase.MetaData.Date = DateOnly.FromDateTime(DateTime.Now);
+            aNewTestCase.MetaData.Status = TestCaseStatus.Draft;
         }
 
         IEnumerable<TestCaseModel> aTestIds = Tests.Where(x => x.Id > 0).ToList();
         if (!aTestIds.Any())
         {
-            SelectedTestCase.Id = 1;
+            aNewTestCase.Id = 1;
         }
         else
         {
-            SelectedTestCase.Id = aTestIds.Max(x => x.Id) + 1;
+            aNewTestCase.Id = aTestIds.Max(x => x.Id) + 1;
         }
-        
-        Tests.Add(SelectedTestCase);
+
+        Tests.Add(aNewTestCase);
+        SelectedTestCase = aNewTestCase;
     }
 
     [RelayCommand]
