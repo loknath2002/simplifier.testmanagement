@@ -18,11 +18,20 @@ public class StorageServiceImpl : IStorageService
         _rendererFactory = rendererFactory;
     }
 
-    public bool Save(string thePath, string theContent)
+    public bool Save(string theOriginalPath, string theNewPath, string theContent)
     {
         string aTempPath = Path.Combine(Paths.TempPath, Guid.NewGuid().ToString());
         File.WriteAllText(aTempPath, theContent);
-        File.Move(aTempPath, thePath, true);
+        if (theOriginalPath == theNewPath)
+        {
+            File.Move(aTempPath, theOriginalPath, true);
+        }
+        else
+        {
+            File.Move(aTempPath, theOriginalPath, true);
+            File.Move(theOriginalPath, theNewPath, true);
+        }
+        
         return true;
     }
 

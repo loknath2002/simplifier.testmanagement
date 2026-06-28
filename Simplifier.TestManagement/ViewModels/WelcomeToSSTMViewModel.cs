@@ -28,7 +28,6 @@ public partial class WelcomeToSSTMViewModel : ViewModelBase
         myViewNavigation = theViewNavigation;
         myDialogService = theDialogService;
         myProjectDetailsViewModel = theProjectDetailsViewModel;
-        CreateTestModelAndNavigate("/home/loknath/SSTM");
     }
 
     [RelayCommand]

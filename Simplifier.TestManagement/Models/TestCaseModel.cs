@@ -2,6 +2,7 @@
 // * Copyright (c) 2026 Loknath, Quantum Technology
 // * All rights reserved.
 // */
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
@@ -42,6 +43,8 @@ public partial class TestCaseModel : ObservableValidator
     
     [ObservableProperty]
     private string _TestData = string.Empty;
+
+    public Guid UniqueId { get; init; } = Guid.NewGuid();
 
     public TestCaseModel(TestProjectModel theTestProject, TestCaseMetadataModel metaData)
     {

@@ -9,6 +9,6 @@ namespace Simplifier.TestManagement.Services;
 
 public interface IStorageService
 {
-    bool Save(string thePath, string theContent);
+    bool Save(string theOriginalPath, string theNewPath, string theContent);
     IEnumerable<TestCaseModel> Load(string theProjectDirectory);
 }

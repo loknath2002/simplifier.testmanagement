@@ -29,7 +29,9 @@ public partial class ProjectDetailsViewModel : ViewModelBase
     private ObservableCollection<TestCaseModel> _Tests = new ObservableCollection<TestCaseModel>();
     
     private LoggerDetail myLogDetail = new LoggerDetail(typeof(ProjectDetailsViewModel));
-
+    
+    private IDictionary<Guid, TestCaseModel> myOriginalTestCase = new Dictionary<Guid, TestCaseModel>();
+    
     public ProjectDetailsViewModel(IStorageService storageService, ITestCaseRendererFactory rendererFactory)
     {
         myStorageService = storageService;
@@ -42,7 +44,11 @@ public partial class ProjectDetailsViewModel : ViewModelBase
     {
         Tests.Clear();
         CurrentProject = project;
-        Tests = new ObservableCollection<TestCaseModel>(myStorageService.Load(project.DirectoryPath));
+        foreach (var aModel in myStorageService.Load(project.DirectoryPath))
+        {
+            AddToVisibleAndInvisibleLists(aModel);
+        }
+        
         BuildIndexableIndex();
     }
     
@@ -75,8 +81,18 @@ public partial class ProjectDetailsViewModel : ViewModelBase
             aNewTestCase.Id = aTestIds.Max(x => x.Id) + 1;
         }
 
-        Tests.Add(aNewTestCase);
+        AddToVisibleAndInvisibleLists(aNewTestCase);
         SelectedTestCase = aNewTestCase;
+    }
+    
+    private void AddToVisibleAndInvisibleLists(TestCaseModel aNewTestCase)
+    {
+        if (!Tests.Contains(aNewTestCase))
+        {
+            Tests.Add(aNewTestCase);
+        }
+        
+        myOriginalTestCase[aNewTestCase.UniqueId] = aNewTestCase.DeepCopy();
     }
 
     [RelayCommand]
@@ -105,21 +121,28 @@ public partial class ProjectDetailsViewModel : ViewModelBase
     private void SaveTestCase()
     {
         using var aTrace = new LogScope(myLogDetail);
-        if (SelectedTestCase == null)
+        var aSelectedTestRef = SelectedTestCase;
+        if (aSelectedTestRef == null)
         {
             return;
         }
 
-        if (!SelectedTestCase.Validate())
+        if (!aSelectedTestRef.Validate())
         {
-            aTrace.Warning($"Test input has errors, {string.Join("|", SelectedTestCase.GetErrors().Select(x => x.ErrorMessage))}");
+            aTrace.Warning($"Test input has errors, {string.Join("|", aSelectedTestRef.GetErrors().Select(x => x.ErrorMessage))}");
             return;
         }
 
-        string aFinalPath = SelectedTestCase.StoragePath();
-        ITestCaseRenderer renderer = myRendererFactory.Create(SelectedTestCase);
-        TestCaseTarget target = renderer.Write(SelectedTestCase);
-        myStorageService.Save(aFinalPath, target.Content);
+        ITestCaseRenderer renderer = myRendererFactory.Create(aSelectedTestRef);
+        TestCaseTarget target = renderer.Write(aSelectedTestRef);
+        if (!myOriginalTestCase.ContainsKey(aSelectedTestRef.UniqueId))
+        {
+            aTrace.Error($"Original test case not found: {aSelectedTestRef.UniqueId}");
+            return;
+        }
+        
+        myStorageService.Save(myOriginalTestCase[aSelectedTestRef.UniqueId].StoragePath(), aSelectedTestRef.StoragePath(), target.Content);
+        AddToVisibleAndInvisibleLists(aSelectedTestRef);
         BuildIndexableIndex();
     }
 

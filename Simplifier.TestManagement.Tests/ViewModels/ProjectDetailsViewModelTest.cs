@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Moq;
 using NUnit.Framework;
 using Simplifier.TestManagement.Models;
 using Simplifier.TestManagement.Services;
@@ -9,42 +10,30 @@ namespace Simplifier.TestManagement.Tests.ViewModels;
 [TestFixture]
 public class ProjectDetailsViewModelTest
 {
-    public class MockStorageService : IStorageService
-    {
-        public IEnumerable<TestCaseModel> Tests { get; set; } = new List<TestCaseModel>();
-        public bool Save(string thePath, string theContent) => true;
-        public IEnumerable<TestCaseModel> Load(string theProjectDirectory) => Tests;
-    }
-
-    public class MockRendererFactory : ITestCaseRendererFactory
-    {
-        public ITestCaseRenderer Create(TestCaseTarget theTarget) => throw new System.NotImplementedException();
-        public ITestCaseRenderer Create(TestCaseModel theModel) => throw new System.NotImplementedException();
-    }
-
     [Test]
     public void LoadTests_ShouldLoadTestsFromStorageService()
     {
         // Arrange
-        var mockStorageService = new MockStorageService();
+        var mockStorageService = new Mock<IStorageService>();
+        var mockRendererFactory = new Mock<ITestCaseRendererFactory>();
         var project = new TestProjectModel("TestPath");
         var tests = new List<TestCaseModel>
         {
             new TestCaseModel(project, new TestCaseMetadataModel()) { Id = 1, Name = "Test1" },
             new TestCaseModel(project, new TestCaseMetadataModel()) { Id = 2, Name = "Test2" }
         };
-        mockStorageService.Tests = tests;
+        mockStorageService.Setup(s => s.Load(It.IsAny<string>())).Returns(tests);
         
-        var viewModel = new ProjectDetailsViewModel(mockStorageService, new MockRendererFactory());
+        var viewModel = new ProjectDetailsViewModel(mockStorageService.Object, mockRendererFactory.Object);
         
         // Act
         viewModel.LoadTests(project);
         
         // Assert
         Assert.That(viewModel.Tests.Count, Is.EqualTo(2));
-        Assert.That(viewModel.Tests[0].Id, Is.EqualTo("1"));
+        Assert.That(viewModel.Tests[0].Id, Is.EqualTo(1));
         Assert.That(viewModel.Tests[0].Name, Is.EqualTo("Test1"));
-        Assert.That(viewModel.Tests[1].Id, Is.EqualTo("2"));
+        Assert.That(viewModel.Tests[1].Id, Is.EqualTo(2));
         Assert.That(viewModel.Tests[1].Name, Is.EqualTo("Test2"));
     }
 }

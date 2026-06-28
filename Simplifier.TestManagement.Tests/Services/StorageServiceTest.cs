@@ -38,7 +38,7 @@ public class StorageServiceTest
         string aPath = Path.Combine(_tempDir, "test.txt");
         string aContent = "Hello World";
         
-        bool aResult = _service.Save(aPath, aContent);
+        bool aResult = _service.Save(aPath, aPath, aContent);
         
         Assert.That(aResult, Is.True);
         Assert.That(File.Exists(aPath), Is.True);
