@@ -17,6 +17,11 @@ public static class NewLineExtensions
     {
         return theLine.Replace("\r\n", EOL).Replace('\r', EOLC);
     }
+
+    public static string ToMarkdownTableEol(this string theLine)
+    {
+        return theLine.ToUnixEol().Replace("\n", "<br>");
+    }
 }
 
 public static class PathExtensions

@@ -106,7 +106,7 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
                 throw new TestCaseReadException(ReadExceptionTypes.CorruptTestRunHistoryRow, string.Join(',', aRow));
             }
 
-            aTestRun.Results.Add(new TestStepResultModel(aRowIndex, aStatus) { Note = aRow[2] });
+            aTestRun.Results.Add(new TestStepResultModel(aRowIndex, aStatus) { Note = aRow[2].Replace("<br>", NewLineExtensions.EOL) });
         }
 
         theModel.TestRuns.Add(aTestRun);
@@ -196,13 +196,13 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
             List<MarkdownTableRow> aRows = [];
             foreach (TestStepModel aStep in theModelToSave.Steps)
             {
-                aRows.Add(new MarkdownTableRow(aStep.Number.ToString(CultureInfo.InvariantCulture), aStep.Procedure, aStep.ExpectedResult));
+                aRows.Add(new MarkdownTableRow(aStep.Number.ToString(CultureInfo.InvariantCulture), aStep.Procedure.ToMarkdownTableEol(), aStep.ExpectedResult.ToMarkdownTableEol()));
             }
 
             myDocument.AppendTable(new MarkdownTableHeader(
-                    new MarkdownTableHeaderCell("Step"),
-                    new MarkdownTableHeaderCell("Procedure"),
-                    new MarkdownTableHeaderCell("Expected Result")),
+                    new MarkdownTableHeaderCell("Step".ToMarkdownTableEol()),
+                    new MarkdownTableHeaderCell("Procedure".ToMarkdownTableEol()),
+                    new MarkdownTableHeaderCell("Expected Result".ToMarkdownTableEol())),
                 aRows);
         }
 
@@ -215,13 +215,13 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
                 List<MarkdownTableRow> aResultTableRows = [];
                 foreach (TestStepResultModel aResult in aRun.Results)
                 {
-                    aResultTableRows.Add(new MarkdownTableRow(aResult.StepNumber.ToString(CultureInfo.InvariantCulture), aResult.Status.ToString(), aResult.Note));
+                    aResultTableRows.Add(new MarkdownTableRow(aResult.StepNumber.ToString(CultureInfo.InvariantCulture), aResult.Status.ToString(), aResult.Note.ToMarkdownTableEol()));
                 }
 
                 myDocument.AppendTable(new MarkdownTableHeader(
-                        new MarkdownTableHeaderCell("Step"),
-                        new MarkdownTableHeaderCell("Status"),
-                        new MarkdownTableHeaderCell("Notes")),
+                        new MarkdownTableHeaderCell("Step".ToMarkdownTableEol()),
+                        new MarkdownTableHeaderCell("Status".ToMarkdownTableEol()),
+                        new MarkdownTableHeaderCell("Notes".ToMarkdownTableEol())),
                     aResultTableRows);
 
                 aRunNumber--;
@@ -245,7 +245,7 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
 
     private static void ExtractTestIDAndTitle(string aTitleAndMetaRegion, TestCaseModel aModel)
     {
-        string[] aLine = aTitleAndMetaRegion.Split('\n');
+        string[] aLine = aTitleAndMetaRegion.Split(NewLineExtensions.EOLC);
         if (aLine.Length < 1)
         {
             throw new TestCaseReadException(ReadExceptionTypes.MissingTestTitle);
@@ -336,7 +336,7 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
 
     private void ExtractMetaData(string theTitleAndMetaRegion, TestCaseModel theModel)
     {
-        string[] aLines = theTitleAndMetaRegion.Split('\n');
+        string[] aLines = theTitleAndMetaRegion.Split(NewLineExtensions.EOLC);
         string[] aPrefixes = [AuthorTag, DateTag, TagsTag, StatusTag];
         string[] aSuffix = [">", ">", ">", ""];
         ReadExceptionTypes[] aExceptionTypes = [ReadExceptionTypes.CorruptTestAuthor, ReadExceptionTypes.CorruptTestDate, ReadExceptionTypes.CorruptTestTags, ReadExceptionTypes.CorruptTestStatus];
@@ -406,7 +406,7 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
                 throw new TestCaseReadException(ReadExceptionTypes.CorruptTestStepsAndResultsRow, string.Join(',', aRow));
             }
 
-            theModel.Steps.Add(new TestStepModel(aRowIndex, aRow[1], aRow[2]));
+            theModel.Steps.Add(new TestStepModel(aRowIndex, aRow[1].Replace("<br>", NewLineExtensions.EOL), aRow[2].Replace("<br>", NewLineExtensions.EOL)));
         }
     }
 
@@ -445,7 +445,7 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
         var aBuilder = new StringBuilder();
         for (int i = aStartIndex; i < aEndIndex; i++)
         {
-            aBuilder.Append($"{theLines[i]}\n");
+            aBuilder.Append($"{theLines[i]}{NewLineExtensions.EOL}");
         }
 
         return aBuilder.ToString();

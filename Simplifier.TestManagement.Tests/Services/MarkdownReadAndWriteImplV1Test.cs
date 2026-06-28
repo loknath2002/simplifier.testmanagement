@@ -123,4 +123,108 @@ public class MarkdownReadAndWriteImplV1Test
         Assert.That(aExpected.Content, Is.EqualTo(aFileContents));
         Assert.That(aExpected.FileName, Is.EqualTo("TestProject/TC_1_Test_Case_1.md"));
     }
+
+    [Test]
+    public void Verify_TestStep_With_Newline_Encoding_Decoding()
+    {
+        var aRenderer = new MarkdownReadAndWriteImplV1();
+        
+        // Setup a model with a newline in a test step
+        var aModel = new TestCaseModel(new TestProjectModel("TestProject"), new TestCaseMetadataModel());
+        aModel.Id = 1;
+        aModel.Name = "Test Case Newline";
+        aModel.Description = "Desc";
+        aModel.Precondition = "Pre";
+        aModel.TestData = "Data";
+        aModel.MetaData.Author = "Author";
+        aModel.MetaData.Date = new DateOnly(2020, 01, 01);
+        
+        string procedureWithNewline = "Step 1\nLine 2";
+        string expectedResultWithNewline = "Result 1\nLine 2";
+        aModel.Steps.Add(new TestStepModel(1, procedureWithNewline, expectedResultWithNewline));
+        
+        // Write it
+        var aTarget = aRenderer.Write(aModel);
+        
+        // Check if markdown contains <br> instead of newline in the table
+        // The markdown table structure should have <br>
+        Assert.That(aTarget.Content, Does.Contain("Step 1<br>Line 2"));
+        Assert.That(aTarget.Content, Does.Contain("Result 1<br>Line 2"));
+        // Should not contain raw newline inside the table row
+        
+        // Read it back
+        var aReadModel = aRenderer.Read(aTarget);
+        
+        Assert.That(aReadModel.Steps[0].Procedure, Is.EqualTo(procedureWithNewline));
+        Assert.That(aReadModel.Steps[0].ExpectedResult, Is.EqualTo(expectedResultWithNewline));
+    }
+
+    [Test]
+    public void Verify_TestStep_With_CRLF_Newline_Encoding_Decoding()
+    {
+        var aRenderer = new MarkdownReadAndWriteImplV1();
+        
+        // Setup a model with a CRLF newline in a test step
+        var aModel = new TestCaseModel(new TestProjectModel("TestProject"), new TestCaseMetadataModel());
+        aModel.Id = 1;
+        aModel.Name = "Test Case CRLF Newline";
+        aModel.Description = "Desc";
+        aModel.Precondition = "Pre";
+        aModel.TestData = "Data";
+        aModel.MetaData.Author = "Author";
+        aModel.MetaData.Date = new DateOnly(2020, 01, 01);
+        
+        string procedureWithCRLF = "Step 1\r\nLine 2";
+        string expectedResultWithCRLF = "Result 1\r\nLine 2";
+        aModel.Steps.Add(new TestStepModel(1, procedureWithCRLF, expectedResultWithCRLF));
+        
+        // Write it
+        var aTarget = aRenderer.Write(aModel);
+        
+        // Check if markdown contains <br> instead of newline in the table
+        // The markdown table structure should have <br>
+        Assert.That(aTarget.Content, Does.Contain("Step 1<br>Line 2"));
+        Assert.That(aTarget.Content, Does.Contain("Result 1<br>Line 2"));
+        // Should not contain raw newline inside the table row
+        
+        // Read it back
+        var aReadModel = aRenderer.Read(aTarget);
+        
+        // Newlines are normalized to \n during reading
+        Assert.That(aReadModel.Steps[0].Procedure, Is.EqualTo(procedureWithCRLF.Replace("\r\n", "\n")));
+        Assert.That(aReadModel.Steps[0].ExpectedResult, Is.EqualTo(expectedResultWithCRLF.Replace("\r\n", "\n")));
+    }
+
+    [Test]
+    public void Verify_RunHistory_Note_With_Newline_Encoding_Decoding()
+    {
+        var aRenderer = new MarkdownReadAndWriteImplV1();
+        
+        // Setup a model with a newline in a run history note
+        var aModel = new TestCaseModel(new TestProjectModel("TestProject"), new TestCaseMetadataModel());
+        aModel.Id = 1;
+        aModel.Name = "Test Case Run History Newline";
+        aModel.Description = "Desc";
+        aModel.Precondition = "Pre";
+        aModel.TestData = "Data";
+        aModel.MetaData.Author = "Author";
+        aModel.MetaData.Date = new DateOnly(2020, 01, 01);
+        
+        var aRun = new TestRun(new DateOnly(2021, 01, 01));
+        string noteWithNewline = "Note 1\nLine 2";
+        aRun.Results.Add(new TestStepResultModel(1, TestStepStatus.Pass) { Note = noteWithNewline });
+        aModel.TestRuns.Add(aRun);
+        
+        // Write it
+        var aTarget = aRenderer.Write(aModel);
+        
+        // Check if markdown contains <br> instead of newline in the table
+        Assert.That(aTarget.Content, Does.Contain("Note 1<br>Line 2"));
+        // Should not contain raw newline inside the table row
+        
+        // Read it back
+        var aReadModel = aRenderer.Read(aTarget);
+        
+        Assert.That(aReadModel.TestRuns[0].Results[0].Note, Is.EqualTo(noteWithNewline));
+    }
 }
