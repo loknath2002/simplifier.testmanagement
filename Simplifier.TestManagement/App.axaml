@@ -3,7 +3,7 @@
              x:Class="Simplifier.TestManagement.App"
              xmlns:sukiUi="clr-namespace:SukiUI;assembly=SukiUI"
              xmlns:local="using:Simplifier.TestManagement"
-             RequestedThemeVariant="Default">
+             RequestedThemeVariant="Light">
 
     <Application.DataTemplates>
         <local:ViewLocator/>

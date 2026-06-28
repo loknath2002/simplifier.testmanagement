@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:suki="https://github.com/kikipoulet/SukiUI"
+             xmlns:sukiContent="clr-namespace:SukiUI.Content;assembly=SukiUI"
              xmlns:vm="using:Simplifier.TestManagement.ViewModels"
              xmlns:models="using:Simplifier.TestManagement.Models"
              xmlns:converters="using:Simplifier.TestManagement.Converters"
@@ -12,7 +13,20 @@
     <UserControl.Resources>
         <converters:DateOnlyToDateTimeOffsetConverter x:Key="DateOnlyToDateTimeOffsetConverter" />
     </UserControl.Resources>
-    <TabControl>
+    <DockPanel>
+        <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto, *, Auto" Margin="10">
+            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                <Border Width="30" Height="30" Background="Gray" CornerRadius="5" />
+                <StackPanel Margin="10,0" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding CurrentProject.Name}" FontWeight="Bold" FontSize="16" />
+                    <TextBlock Text="{Binding CurrentProject.DirectoryPath}" FontSize="12" Foreground="Gray" />
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Spacing="10">
+                <Button Classes="Rounded" Content="?" FontWeight="Bold"/>
+            </StackPanel>
+        </Grid>
+        <TabControl>
         <TabItem Header="Organize">
             <Grid
                 ColumnDefinitions="20*, 4, 80*">
@@ -106,12 +120,12 @@
                                                         <NumericUpDown Grid.Column="0" Value="{Binding Number}"  Increment="1"
                                                                        Width="80" VerticalAlignment="Center" />
                                                         <TextBox Grid.Column="1" Text="{Binding Procedure}"
-                                                                 PlaceholderText="Procedure" AcceptsReturn="True"
+                                                                 VerticalContentAlignment="Top" PlaceholderText="Procedure" AcceptsReturn="True"
                                                                  TextWrapping="Wrap" Margin="5,0" />
                                                         <TextBox Grid.Column="2" Text="{Binding ExpectedResult}"
-                                                                 PlaceholderText="Expected Result" AcceptsReturn="True"
+                                                                 VerticalContentAlignment="Top" PlaceholderText="Expected Result" AcceptsReturn="True"
                                                                  TextWrapping="Wrap" Margin="5,0" />
-                                                        <Button Grid.Column="3" Content="Delete"
+                                                        <Button Grid.Column="3" Content="Delete" MaxHeight="36"
                                                                 Command="{Binding $parent[UserControl].((vm:ProjectDetailsViewModel)DataContext).RemoveStepCommand}"
                                                                 CommandParameter="{Binding}" Classes="Warning Rounded" />
                                                     </Grid>
@@ -138,4 +152,5 @@
             <!-- Content -->
         </TabItem>
     </TabControl>
+    </DockPanel>
 </UserControl>
