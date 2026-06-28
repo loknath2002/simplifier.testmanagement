@@ -8,6 +8,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Simplifier.TestManagement.Services;
 namespace Simplifier.TestManagement.Models;
 
 public partial class TestCaseModel : ObservableValidator
@@ -22,6 +23,7 @@ public partial class TestCaseModel : ObservableValidator
 
     [Required]
     [ObservableProperty]
+    [CustomValidation(typeof(TestModelDuplicateHandler), "ValidateForTestId")]
     private int _Id = -1;
 
     [Required]

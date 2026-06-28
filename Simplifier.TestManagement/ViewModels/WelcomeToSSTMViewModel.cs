@@ -3,6 +3,7 @@
 // * All rights reserved.
 // */
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Simplifier.TestManagement.Models;
@@ -16,7 +17,10 @@ public partial class WelcomeToSSTMViewModel : ViewModelBase
     private readonly IViewNavigation myViewNavigation;
 
     [ObservableProperty]
-    private string? _Greeting = "Welcome to Super Simple Test Management Console!";
+    private string? _Greeting = "Welcome to Super Simple Test Management!";
+
+    [ObservableProperty]
+    private ObservableCollection<string> _RecentProjects = new() { "Project A", "Project B", "Project C" };
 
     public WelcomeToSSTMViewModel()
     {

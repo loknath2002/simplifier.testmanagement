@@ -24,7 +24,7 @@ public class ProjectDetailsViewModelTest
         };
         mockStorageService.Setup(s => s.Load(It.IsAny<string>())).Returns(tests);
         
-        var viewModel = new ProjectDetailsViewModel(mockStorageService.Object, mockRendererFactory.Object);
+        var viewModel = new ProjectDetailsViewModel(mockStorageService.Object, mockRendererFactory.Object, new SharedContext());
         
         // Act
         viewModel.LoadTests(project);

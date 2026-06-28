@@ -13,16 +13,13 @@ namespace Simplifier.TestManagement
         public static void AddCommonServices(this IServiceCollection collection)
         {
             collection.AddTransient<ProjectDetailsViewModel>();
-            
             collection.AddTransient<WelcomeToSSTMViewModel>();
-    
             collection.AddSingleton<MainWindowViewModel>();
-    
             collection.AddSingleton<IViewNavigation>(provider => provider.GetRequiredService<MainWindowViewModel>());
-            
             collection.AddSingleton<ITestCaseRendererFactory, TestCaseRendererFactory>();
             collection.AddSingleton<IStorageService, StorageServiceImpl>();
             collection.AddSingleton<IDialogService, DialogService>();
+            collection.AddSingleton<ISharedContext, SharedContext>();
         }
     }
 }

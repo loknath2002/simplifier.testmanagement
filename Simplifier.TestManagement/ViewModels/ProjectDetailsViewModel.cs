@@ -18,6 +18,7 @@ public partial class ProjectDetailsViewModel : ViewModelBase
 {
     private readonly ITestCaseRendererFactory myRendererFactory;
     private readonly IStorageService myStorageService;
+    private readonly ISharedContext mySharedContext;
 
     [ObservableProperty]
     private TestProjectModel? _CurrentProject;
@@ -25,23 +26,22 @@ public partial class ProjectDetailsViewModel : ViewModelBase
     [ObservableProperty]
     private TestCaseModel? _SelectedTestCase;
 
-    [ObservableProperty]
-    private ObservableCollection<TestCaseModel> _Tests = new ObservableCollection<TestCaseModel>();
+    public ObservableCollection<TestCaseModel> Tests { get; } = new ObservableCollection<TestCaseModel>();
     
     private LoggerDetail myLogDetail = new LoggerDetail(typeof(ProjectDetailsViewModel));
     
-    private IDictionary<Guid, TestCaseModel> myOriginalTestCase = new Dictionary<Guid, TestCaseModel>();
-    
-    public ProjectDetailsViewModel(IStorageService storageService, ITestCaseRendererFactory rendererFactory)
+    public ProjectDetailsViewModel(IStorageService storageService, ITestCaseRendererFactory rendererFactory, ISharedContext sharedContext)
     {
         myStorageService = storageService;
         myRendererFactory = rendererFactory;
+        mySharedContext = sharedContext;
     }
 
     public IEnumerable<TestCaseStatus> TestCaseStatuses => Enum.GetValues<TestCaseStatus>();
 
     public void LoadTests(TestProjectModel project)
     {
+        mySharedContext.OriginalTestCases.Clear();
         Tests.Clear();
         CurrentProject = project;
         foreach (var aModel in myStorageService.Load(project.DirectoryPath))
@@ -92,7 +92,7 @@ public partial class ProjectDetailsViewModel : ViewModelBase
             Tests.Add(aNewTestCase);
         }
         
-        myOriginalTestCase[aNewTestCase.UniqueId] = aNewTestCase.DeepCopy();
+        mySharedContext.OriginalTestCases[aNewTestCase.UniqueId] = aNewTestCase.DeepCopy();
     }
 
     [RelayCommand]
@@ -135,17 +135,17 @@ public partial class ProjectDetailsViewModel : ViewModelBase
 
         ITestCaseRenderer renderer = myRendererFactory.Create(aSelectedTestRef);
         TestCaseTarget target = renderer.Write(aSelectedTestRef);
-        if (!myOriginalTestCase.ContainsKey(aSelectedTestRef.UniqueId))
+        if (!mySharedContext.OriginalTestCases.ContainsKey(aSelectedTestRef.UniqueId))
         {
             aTrace.Error($"Original test case not found: {aSelectedTestRef.UniqueId}");
             return;
         }
         
-        myStorageService.Save(myOriginalTestCase[aSelectedTestRef.UniqueId].StoragePath(), aSelectedTestRef.StoragePath(), target.Content);
+        myStorageService.Save(mySharedContext.OriginalTestCases[aSelectedTestRef.UniqueId].StoragePath(), aSelectedTestRef.StoragePath(), target.Content);
         AddToVisibleAndInvisibleLists(aSelectedTestRef);
         BuildIndexableIndex();
     }
-
+    
     [RelayCommand]
     private void DeleteTestCase()
     {

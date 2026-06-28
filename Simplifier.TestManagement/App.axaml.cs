@@ -23,6 +23,7 @@ public partial class App : Application
         var collection = new ServiceCollection();
         collection.AddCommonServices();
         var services = collection.BuildServiceProvider();
+        TestModelDuplicateHandler.SharedContext = services.GetRequiredService<ISharedContext>();
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.MainWindow = new MainWindow()

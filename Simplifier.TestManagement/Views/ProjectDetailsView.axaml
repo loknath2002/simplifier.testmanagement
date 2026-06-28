@@ -31,8 +31,8 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <Button Grid.Row="1" Content="Create New Test Case" Command="{Binding CreateNewTestCaseCommand}"
-                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+                    <Button Grid.Row="1" Content="Create New Test Case" Margin="10, 0, 10, 10" Command="{Binding CreateNewTestCaseCommand}"
+                            Classes="Success Rounded" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
                 </Grid>
                 <GridSplitter Grid.Column="1" Background="Black" ResizeDirection="Columns" />
                 <Grid Grid.Column="2">
@@ -121,12 +121,12 @@
                                     <TextBlock Text="Test Runs Content" />
                                 </TabItem>
                             </TabControl>
-                            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right"
-                                        Margin="10, 0, 10, 10" Spacing="10">
-                                <Button Content="Save" Classes="Flat Rounded" Command="{Binding SaveTestCaseCommand}" />
-                                <Button Content="Delete" Classes="Flat Rounded"
-                                        Command="{Binding DeleteTestCaseCommand}" />
-                            </StackPanel>
+                            <DockPanel Grid.Row="1"  HorizontalAlignment="Stretch"
+                                        Margin="25, 0, 25, 10" LastChildFill="False" >
+                                <Button DockPanel.Dock="Right" Content="Save" Classes="Flat Rounded" Command="{Binding SaveTestCaseCommand}" />
+                                <Button DockPanel.Dock="Left" Content="Delete" Classes="Danger Rounded"
+                                         Command="{Binding DeleteTestCaseCommand}" />
+                            </DockPanel>
                         </Grid>
                     </Grid>
                 </Grid>

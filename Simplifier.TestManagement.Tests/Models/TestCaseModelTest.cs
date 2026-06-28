@@ -2,7 +2,9 @@
 using Simplifier.TestManagement.Models;
 using Simplifier.TestManagement;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Simplifier.TestManagement.Services;
 
 namespace Simplifier.TestManagement.Tests.Models;
 
@@ -56,5 +58,20 @@ public class TestCaseModelTest
         Assert.That(copy.TestRuns.Count, Is.EqualTo(1));
         Assert.That(copy.TestRuns[0].Results.Count, Is.EqualTo(1));
         Assert.That(copy.TestRuns[0], Is.Not.SameAs(tc.TestRuns[0]));
+    }
+    [Test]
+    public void TestCaseModel_DuplicateId_ValidationFails()
+    {
+        var project = new TestProjectModel("TestPath");
+        var metaData = new TestCaseMetadataModel();
+        var tc1 = new TestCaseModel(project, metaData) { Id = 1 };
+        var tc2 = new TestCaseModel(project, metaData) { Id = 1 };
+
+        var sharedContext = new SharedContext();
+        sharedContext.OriginalTestCases.Add(tc1.UniqueId, tc1);
+        TestModelDuplicateHandler.SharedContext = sharedContext;
+
+        Assert.That(tc2.Validate(), Is.False);
+        Assert.That(tc2.HasErrors, Is.True);
     }
 }

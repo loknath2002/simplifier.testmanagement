@@ -4,16 +4,26 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:suki="https://github.com/kikipoulet/SukiUI"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
             x:DataType="vm:WelcomeToSSTMViewModel"
              x:Class="Simplifier.TestManagement.Views.WelcomeToSSTMView">
-    <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <TextBlock Text="{Binding Greeting}"/>
-        <suki:GlassCard>
-            <Button Content="New Project" Command="{Binding CreateNewProject}"/>
-        </suki:GlassCard>
-        <suki:GlassCard>
-            <Button Content="Open Project"/>
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="40" Margin="40">
+        <TextBlock Text="{Binding Greeting}" FontSize="32" FontWeight="Bold" HorizontalAlignment="Center"/>
+        
+        <StackPanel Orientation="Horizontal" Spacing="20" HorizontalAlignment="Center">
+            <suki:GlassCard IsInteractive="True" Command="{Binding CreateNewProjectCommand}" Width="200" Height="150">
+                <TextBlock FontWeight="Bold" Text="New Project" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+            </suki:GlassCard>
+            <suki:GlassCard IsInteractive="True" Command="{Binding OpenExistingProjectCommand}" Width="200" Height="150">
+                <TextBlock FontWeight="Bold" Text="Open Project" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+            </suki:GlassCard>
+        </StackPanel>
+        
+        <suki:GlassCard MinWidth="420">
+            <StackPanel Margin="20">
+                <TextBlock  Text="Recent Projects" FontSize="20" FontWeight="Bold" Margin="0, 0, 0, 10"/>
+                <ListBox ItemsSource="{Binding RecentProjects}" Background="Transparent"/>
+            </StackPanel>
         </suki:GlassCard>
     </StackPanel>
 </UserControl>
