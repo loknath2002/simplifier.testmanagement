@@ -24,7 +24,6 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
     #region Fields
 
     private const string DateFormat = "dd-MMM-yyyy";
-    private const string RevisionTag = "Revision";
     private const string AuthorTag = "Author";
     private const string DatasetTag = "Dataset";
     private const string DateTag = "Date";
@@ -180,7 +179,6 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
             new MarkdownParagraph($"{AuthorTag}: {theModelToSave.MetaData.Author}"),
             new MarkdownParagraph($"{DateTag}: {theModelToSave.MetaData.Date.ToString(DateFormat)}"),
             new MarkdownParagraph($"{TagsTag}: {string.Join(',', theModelToSave.MetaData.Tags)}"),
-            new MarkdownParagraph($"{RevisionTag}: {theModelToSave.MetaData.Revision.ToString(CultureInfo.InvariantCulture)}"),
             new MarkdownParagraph($"{StatusTag}: {theModelToSave.MetaData.Status}")
         ));
 
@@ -339,9 +337,9 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
     private void ExtractMetaData(string theTitleAndMetaRegion, TestCaseModel theModel)
     {
         string[] aLines = theTitleAndMetaRegion.Split('\n');
-        string[] aPrefixes = [AuthorTag, DateTag, TagsTag, RevisionTag, StatusTag];
-        string[] aSuffix = [">", ">", ">", ">", ""];
-        ReadExceptionTypes[] aExceptionTypes = [ReadExceptionTypes.CorruptTestAuthor, ReadExceptionTypes.CorruptTestDate, ReadExceptionTypes.CorruptTestRevision, ReadExceptionTypes.CorruptTestTags, ReadExceptionTypes.CorruptTestStatus];
+        string[] aPrefixes = [AuthorTag, DateTag, TagsTag, StatusTag];
+        string[] aSuffix = [">", ">", ">", ""];
+        ReadExceptionTypes[] aExceptionTypes = [ReadExceptionTypes.CorruptTestAuthor, ReadExceptionTypes.CorruptTestDate, ReadExceptionTypes.CorruptTestTags, ReadExceptionTypes.CorruptTestStatus];
         for (int i = 0; i < aPrefixes.Length; i++)
         {
             string aMetaParts = GetRegion(aLines, $"> {aPrefixes[i]}", aSuffix[i], ReadExceptionTypes.CorruptTestMetadata);
@@ -375,16 +373,6 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
             }
 
             if (i == 3)
-            {
-                if (!int.TryParse(aParts[1].Trim(), out int aRev))
-                {
-                    throw new TestCaseReadException(ReadExceptionTypes.CorruptTestStatus);
-                }
-
-                theModel.MetaData.Revision = aRev;
-            }
-
-            if (i == 4)
             {
                 if (!Enum.TryParse(aParts[1].Trim(), out TestCaseStatus aStatus))
                 {

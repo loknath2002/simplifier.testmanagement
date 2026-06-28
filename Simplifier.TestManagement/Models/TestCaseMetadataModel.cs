@@ -18,9 +18,6 @@ public partial class TestCaseMetadataModel : ObservableValidator
     private DateOnly _Date = DateOnly.FromDateTime(DateTime.Now);
 
     [ObservableProperty]
-    private int _Revision;
-
-    [ObservableProperty]
     private TestCaseStatus _Status = TestCaseStatus.Draft;
 
     [ObservableProperty]

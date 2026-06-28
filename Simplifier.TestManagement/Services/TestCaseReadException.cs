@@ -15,7 +15,6 @@ public enum ReadExceptionTypes
     CorruptTestAuthor,
     CorruptTestDate,
     CorruptTestTags,
-    CorruptTestRevision,
     CorruptTestStatus,
     MissingTestDescriptionRegion,
     MissingTestPreconditionRegion,

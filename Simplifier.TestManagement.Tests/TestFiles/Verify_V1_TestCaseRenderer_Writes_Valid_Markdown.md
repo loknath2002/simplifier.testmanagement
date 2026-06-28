@@ -6,8 +6,6 @@
 >
 > Tags: Tag1,Tag2
 >
-> Revision: 1
->
 > Status: Draft
 
 ## Description

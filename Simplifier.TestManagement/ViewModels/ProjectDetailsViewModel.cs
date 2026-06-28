@@ -61,7 +61,6 @@ public partial class ProjectDetailsViewModel : ViewModelBase
         
         var aNewTestCase = new TestCaseModel(CurrentProject, new TestCaseMetadataModel());
         {
-            aNewTestCase.MetaData.Revision++;
             aNewTestCase.MetaData.Date = DateOnly.FromDateTime(DateTime.Now);
             aNewTestCase.MetaData.Status = TestCaseStatus.Draft;
         }

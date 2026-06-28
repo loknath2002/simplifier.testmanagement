@@ -79,11 +79,6 @@
                                       ItemsSource="{Binding TestCaseStatuses}"
                                       SelectedItem="{Binding SelectedTestCase.MetaData.Status}"
                                       HorizontalAlignment="Stretch" />
-                            <NumericUpDown IsEnabled="False" Grid.Row="2" Grid.Column="1"
-                                           Increment="1"
-                                           Value="{Binding SelectedTestCase.MetaData.Revision}"
-                                           HorizontalAlignment="Stretch" />
-
                             <TextBox Grid.Row="3" Grid.Column="0" PlaceholderText="Tags"
                                      Text="{Binding SelectedTestCase.MetaData.TagsString}" Margin="5" />
 

@@ -27,7 +27,6 @@ public class MarkdownReadAndWriteImplV1Test
         Assert.That(aActual.MetaData.Date, Is.EqualTo(new DateOnly(2020, 01, 01)));
         Assert.That(aActual.MetaData.Tags, Is.EqualTo(["Tag1", "Tag2"]));
         Assert.That(aActual.MetaData.Status, Is.EqualTo(TestCaseStatus.Draft));
-        Assert.That(aActual.MetaData.Revision, Is.EqualTo(100));
         Assert.That(aActual.Description, Is.EqualTo("""
                                                     Test case description goes here.
                                                     SecondLine of description.
@@ -95,7 +94,6 @@ public class MarkdownReadAndWriteImplV1Test
         aModel.MetaData.Date = new DateOnly(2020, 01, 01);
         aModel.MetaData.Tags.Add("Tag1");
         aModel.MetaData.Tags.Add("Tag2");
-        aModel.MetaData.Revision = 1;
         aModel.Steps.Add(new TestStepModel(){ Number = 1, Procedure = "Navigate to the application login screen.", ExpectedResult = "Login form is displayed with Username and Password fields."});
         aModel.Steps.Add(new TestStepModel(){ Number = 2, Procedure = "Navigate to the application login screen.", ExpectedResult = "Login form is displayed with Username and Password fields."});
         aModel.Steps.Add(new TestStepModel(){ Number = 3, Procedure = "Enter valid `username` and `password` from Test Data.", ExpectedResult = "Characters are masked in the password field. Login button becomes active."});
