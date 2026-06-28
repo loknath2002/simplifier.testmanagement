@@ -86,11 +86,16 @@
                                      Text="{Binding SelectedTestCase.Description}" Margin="5" />
                         </Grid>
                         <Grid Grid.Row="1" RowDefinitions="*, Auto">
-                            <TabControl Grid.Row="0" Margin="10">
-                                <TabItem Header="Precondition/s">
-                                    <TextBox AcceptsReturn="True" VerticalContentAlignment="Top" TextWrapping="Wrap"
-                                             PlaceholderText="Precondition/s"
-                                             Text="{Binding SelectedTestCase.Precondition}" />
+                            <TabControl Grid.Row="0" Margin="10" SelectedIndex="{Binding SelectedTabIndex}">
+                                <TabItem Header="Precondition &amp; Data">
+                                    <Grid ColumnDefinitions="*, *">
+                                        <TextBox Grid.Column="0" AcceptsReturn="True" VerticalContentAlignment="Top" TextWrapping="Wrap"
+                                                 PlaceholderText="Precondition/s"
+                                                 Text="{Binding SelectedTestCase.Precondition}" Margin="5" />
+                                        <TextBox Grid.Column="1" AcceptsReturn="True" VerticalContentAlignment="Top" TextWrapping="Wrap"
+                                                 PlaceholderText="Test Data"
+                                                 Text="{Binding SelectedTestCase.TestData}" Margin="5" />
+                                    </Grid>
                                 </TabItem>
                                 <TabItem Header="Steps">
                                     <Grid RowDefinitions="*, Auto">
@@ -98,7 +103,7 @@
                                             <ListBox.ItemTemplate>
                                                 <DataTemplate x:DataType="models:TestStepModel">
                                                     <Grid ColumnDefinitions="Auto, *, *, Auto" Margin="5">
-                                                        <NumericUpDown Grid.Column="0" Value="{Binding Number}"
+                                                        <NumericUpDown Grid.Column="0" Value="{Binding Number}"  Increment="1"
                                                                        Width="80" VerticalAlignment="Center" />
                                                         <TextBox Grid.Column="1" Text="{Binding Procedure}"
                                                                  PlaceholderText="Procedure" AcceptsReturn="True"
@@ -108,25 +113,22 @@
                                                                  TextWrapping="Wrap" Margin="5,0" />
                                                         <Button Grid.Column="3" Content="Delete"
                                                                 Command="{Binding $parent[UserControl].((vm:ProjectDetailsViewModel)DataContext).RemoveStepCommand}"
-                                                                CommandParameter="{Binding}" Classes="Flat" />
+                                                                CommandParameter="{Binding}" Classes="Warning Rounded" />
                                                     </Grid>
                                                 </DataTemplate>
                                             </ListBox.ItemTemplate>
                                         </ListBox>
-                                        <Button Grid.Row="1" Content="Add Step" Command="{Binding AddStepCommand}"
-                                                HorizontalAlignment="Right" Margin="5" />
                                     </Grid>
                                 </TabItem>
                                 <TabItem Header="TestRuns">
                                     <TextBlock Text="Test Runs Content" />
                                 </TabItem>
                             </TabControl>
-                            <DockPanel Grid.Row="1"  HorizontalAlignment="Stretch"
-                                        Margin="25, 0, 25, 10" LastChildFill="False" >
-                                <Button DockPanel.Dock="Right" Content="Save" Classes="Flat Rounded" Command="{Binding SaveTestCaseCommand}" />
-                                <Button DockPanel.Dock="Left" Content="Delete" Classes="Danger Rounded"
-                                         Command="{Binding DeleteTestCaseCommand}" />
-                            </DockPanel>
+                            <Grid Grid.Row="1" Margin="25, 0, 25, 10" ColumnDefinitions="Auto, *, Auto">
+                                <Button Grid.Column="0" Content="Delete" Classes="Danger Rounded" Command="{Binding DeleteTestCaseCommand}" />
+                                <Button Grid.Column="1" Content="+ Add Step" Command="{Binding AddStepCommand}" Classes="Flat" HorizontalAlignment="Center" IsVisible="{Binding IsAddStepVisible}" />
+                                <Button Grid.Column="2" Content="Save" Classes="Flat Rounded" Command="{Binding SaveTestCaseCommand}" />
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Grid>

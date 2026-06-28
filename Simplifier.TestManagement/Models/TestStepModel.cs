@@ -2,42 +2,21 @@
 // * Copyright (c) 2026 Loknath, Quantum Technology
 // * All rights reserved.
 // */
+using System;
+using System.ComponentModel.DataAnnotations;
+using CommunityToolkit.Mvvm.ComponentModel;
 namespace Simplifier.TestManagement.Models;
 
 #region Using statements
 
-using System;
-using CommunityToolkit.Mvvm.ComponentModel;
+
 
 #endregion
 
 public partial class TestStepModel : ObservableValidator, IEquatable<TestStepModel>
 {
-#region Fields
 
-    [ObservableProperty]
-    private string _ExpectedResult = string.Empty;
-
-    [ObservableProperty]
-    private int _Number = -1;
-
-    [ObservableProperty]
-    private string _Procedure = string.Empty;
-
-    public TestStepModel()
-    {
-        
-    }
-    
-    public TestStepModel(int theNumber, string theProcedure, string theResult)
-    {
-        this.Number = theNumber;
-        this.Procedure = theProcedure;
-        this.ExpectedResult = theResult;
-    }
-
-#endregion
-#region IEquatable<TestStepModel> Members
+    #region IEquatable<TestStepModel> Members
 
     public bool Equals(TestStepModel? other)
     {
@@ -46,8 +25,43 @@ public partial class TestStepModel : ObservableValidator, IEquatable<TestStepMod
         return ExpectedResult == other.ExpectedResult && Number == other.Number && Procedure == other.Procedure;
     }
 
-#endregion
-#region Members
+    #endregion
+
+    #region Fields
+
+    [Required]
+    [ObservableProperty]
+    private string _ExpectedResult = string.Empty;
+
+    [Required]
+    [ObservableProperty]
+    private int _Number = -1;
+
+    [Required]
+    [ObservableProperty]
+    private string _Procedure = string.Empty;
+
+    public TestStepModel()
+    {
+
+    }
+
+    internal bool Validate()
+    {
+        ValidateAllProperties();
+        return !HasErrors;
+    }
+
+    public TestStepModel(int theNumber, string theProcedure, string theResult)
+    {
+        Number = theNumber;
+        Procedure = theProcedure;
+        ExpectedResult = theResult;
+    }
+
+    #endregion
+
+    #region Members
 
     public override bool Equals(object? obj)
     {
@@ -64,8 +78,9 @@ public partial class TestStepModel : ObservableValidator, IEquatable<TestStepMod
 
     public override string ToString()
     {
-        return $"{this.Number} | {this.Procedure} | {this.ExpectedResult}";
+        return $"{Number} | {Procedure} | {ExpectedResult}";
     }
 
-#endregion
+    #endregion
+
 }

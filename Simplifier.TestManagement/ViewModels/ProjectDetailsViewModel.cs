@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -16,20 +15,22 @@ namespace Simplifier.TestManagement.ViewModels;
 
 public partial class ProjectDetailsViewModel : ViewModelBase
 {
+    private const int TestTabIndex = 1;
     private readonly ITestCaseRendererFactory myRendererFactory;
-    private readonly IStorageService myStorageService;
     private readonly ISharedContext mySharedContext;
+    private readonly IStorageService myStorageService;
 
     [ObservableProperty]
     private TestProjectModel? _CurrentProject;
 
     [ObservableProperty]
+    private int _SelectedTabIndex;
+
+    [ObservableProperty]
     private TestCaseModel? _SelectedTestCase;
 
-    public ObservableCollection<TestCaseModel> Tests { get; } = new ObservableCollection<TestCaseModel>();
-    
-    private LoggerDetail myLogDetail = new LoggerDetail(typeof(ProjectDetailsViewModel));
-    
+    private readonly LoggerDetail myLogDetail = new LoggerDetail(typeof(ProjectDetailsViewModel));
+
     public ProjectDetailsViewModel(IStorageService storageService, ITestCaseRendererFactory rendererFactory, ISharedContext sharedContext)
     {
         myStorageService = storageService;
@@ -37,24 +38,33 @@ public partial class ProjectDetailsViewModel : ViewModelBase
         mySharedContext = sharedContext;
     }
 
+    public bool IsAddStepVisible => SelectedTabIndex == TestTabIndex;
+
+    public ObservableCollection<TestCaseModel> Tests { get; } = new ObservableCollection<TestCaseModel>();
+
     public IEnumerable<TestCaseStatus> TestCaseStatuses => Enum.GetValues<TestCaseStatus>();
+
+    partial void OnSelectedTabIndexChanged(int value)
+    {
+        OnPropertyChanged(nameof(ProjectDetailsViewModel.IsAddStepVisible));
+    }
 
     public void LoadTests(TestProjectModel project)
     {
         mySharedContext.OriginalTestCases.Clear();
         Tests.Clear();
         CurrentProject = project;
-        foreach (var aModel in myStorageService.Load(project.DirectoryPath))
+        foreach (TestCaseModel aModel in myStorageService.Load(project.DirectoryPath))
         {
             AddToVisibleAndInvisibleLists(aModel);
         }
-        
+
         BuildIndexableIndex();
     }
-    
+
     private void BuildIndexableIndex()
     {
-        
+
     }
 
     [RelayCommand]
@@ -64,7 +74,7 @@ public partial class ProjectDetailsViewModel : ViewModelBase
         {
             return;
         }
-        
+
         var aNewTestCase = new TestCaseModel(CurrentProject, new TestCaseMetadataModel());
         {
             aNewTestCase.MetaData.Date = DateOnly.FromDateTime(DateTime.Now);
@@ -84,14 +94,14 @@ public partial class ProjectDetailsViewModel : ViewModelBase
         AddToVisibleAndInvisibleLists(aNewTestCase);
         SelectedTestCase = aNewTestCase;
     }
-    
+
     private void AddToVisibleAndInvisibleLists(TestCaseModel aNewTestCase)
     {
         if (!Tests.Contains(aNewTestCase))
         {
             Tests.Add(aNewTestCase);
         }
-        
+
         mySharedContext.OriginalTestCases[aNewTestCase.UniqueId] = aNewTestCase.DeepCopy();
     }
 
@@ -102,7 +112,7 @@ public partial class ProjectDetailsViewModel : ViewModelBase
         {
             return;
         }
-        
+
         SelectedTestCase.Steps.Add(new TestStepModel(SelectedTestCase.Steps.Count + 1, "", ""));
     }
 
@@ -113,26 +123,44 @@ public partial class ProjectDetailsViewModel : ViewModelBase
         {
             return;
         }
-        
+
         SelectedTestCase.Steps.Remove(step);
+
+        for (int i = 0; i < SelectedTestCase.Steps.Count; i++)
+        {
+            SelectedTestCase.Steps[i].Number = i + 1;
+        }
     }
 
     [RelayCommand]
     private void SaveTestCase()
     {
         using var aTrace = new LogScope(myLogDetail);
-        var aSelectedTestRef = SelectedTestCase;
+        TestCaseModel? aSelectedTestRef = SelectedTestCase;
         if (aSelectedTestRef == null)
         {
             return;
         }
 
+        bool aStepsValid = true;
+        foreach (TestStepModel aStep in aSelectedTestRef.Steps)
+        {
+            aStepsValid &= aStep.Validate();
+        }
+        
         if (!aSelectedTestRef.Validate())
         {
             aTrace.Warning($"Test input has errors, {string.Join("|", aSelectedTestRef.GetErrors().Select(x => x.ErrorMessage))}");
             return;
         }
 
+        if (!aStepsValid)
+        {
+            SelectedTabIndex = TestTabIndex;
+            aTrace.Warning($"Test Steps has errors.");
+            return;
+        }
+        
         ITestCaseRenderer renderer = myRendererFactory.Create(aSelectedTestRef);
         TestCaseTarget target = renderer.Write(aSelectedTestRef);
         if (!mySharedContext.OriginalTestCases.ContainsKey(aSelectedTestRef.UniqueId))
@@ -140,12 +168,12 @@ public partial class ProjectDetailsViewModel : ViewModelBase
             aTrace.Error($"Original test case not found: {aSelectedTestRef.UniqueId}");
             return;
         }
-        
+
         myStorageService.Save(mySharedContext.OriginalTestCases[aSelectedTestRef.UniqueId].StoragePath(), aSelectedTestRef.StoragePath(), target.Content);
         AddToVisibleAndInvisibleLists(aSelectedTestRef);
         BuildIndexableIndex();
     }
-    
+
     [RelayCommand]
     private void DeleteTestCase()
     {
