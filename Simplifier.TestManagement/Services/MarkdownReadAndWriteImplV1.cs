@@ -61,13 +61,13 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
         ExtractMetaData(aTitleAndMetaRegion, aModel);
 
         string aDescriptionRegion = GetRegion(aLines, aDescHeader, aPreHeader, ReadExceptionTypes.MissingTestDescriptionRegion);
-        aModel.Description = aDescriptionRegion.Replace(aDescHeader, string.Empty).Trim();
+        aModel.Description = CleanBlockquotedContent(aDescriptionRegion.Replace(aDescHeader, string.Empty));
 
         string aPreconditionsRegion = GetRegion(aLines, aPreHeader, aDataHeader, ReadExceptionTypes.MissingTestPreconditionRegion);
-        aModel.Precondition = aPreconditionsRegion.Replace(aPreHeader, string.Empty).Trim();
+        aModel.Precondition = CleanBlockquotedContent(aPreconditionsRegion.Replace(aPreHeader, string.Empty));
 
         string aDatasetRegion = GetRegion(aLines, aDataHeader, aStepsAndResultsHeader, ReadExceptionTypes.MissingTestDatasetRegion);
-        aModel.TestData = aDatasetRegion.Replace(aDataHeader, string.Empty).Trim();
+        aModel.TestData = CleanBlockquotedContent(aDatasetRegion.Replace(aDataHeader, string.Empty));
 
         string aStepsRegion = GetRegion(aLines, aStepsAndResultsHeader, aRunHistoryHeader, ReadExceptionTypes.MissingTestStepsAndExpectedRegion);
         ExtractStepResultsTable(aStepsRegion, aModel);
@@ -183,13 +183,16 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
         ));
 
         myDocument.Append(new MarkdownHeader(DescriptionTag, 2));
-        myDocument.AppendParagraph(theModelToSave.Description);
+        myDocument.Append(new MarkdownBlockquote(
+            theModelToSave.Description.ToUnixEol().Split(NewLineExtensions.EOLC).Select(x => new MarkdownParagraph(x))));
 
         myDocument.Append(new MarkdownHeader(PreconditionsTag, 2));
-        myDocument.AppendParagraph(theModelToSave.Precondition);
+        myDocument.Append(new MarkdownBlockquote(
+            theModelToSave.Precondition.ToUnixEol().Split(NewLineExtensions.EOLC).Select(x => new MarkdownParagraph(x))));
 
         myDocument.Append(new MarkdownHeader(DatasetTag, 2));
-        myDocument.AppendParagraph(theModelToSave.TestData);
+        myDocument.Append(new MarkdownBlockquote(
+            theModelToSave.TestData.ToUnixEol().Split(NewLineExtensions.EOLC).Select(x => new MarkdownParagraph(x))));
 
         {
             myDocument.Append(new MarkdownHeader(StepsAndExpectedResultsTag, 2));
@@ -449,6 +452,11 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
         }
 
         return aBuilder.ToString();
+    }
+
+    private string CleanBlockquotedContent(string content)
+    {
+        return string.Join(NewLineExtensions.EOL, content.Split(NewLineExtensions.EOLC).Select(line => line.Trim('>').Trim())).Trim();
     }
 
     #endregion

@@ -10,22 +10,22 @@
 
 ## Description
 
-Test case description goes here.
-SecondLine of description.
-* User is logged out.
-* System is in a known state.
+>Test case description goes here.
+>SecondLine of description.
+>* User is logged out.
+>* System is in a known state.
 
 ## Preconditions
 
-Test case preconditions go here.
-* User is logged out.
-* System is in a known state.
+> Test case preconditions go here.
+> * User is logged out.
+> * System is in a known state.
 
 ## Dataset
 
-Test case data goes here.
-* Username:something
-* Password:something
+> Test case data goes here.
+> * Username:something
+> * Password:something
 
 ## Steps & Expected Results
 

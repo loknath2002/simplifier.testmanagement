@@ -9,6 +9,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Simplifier.TestManagement.Services;
+using Simplifier.TestManagement.Validators;
 namespace Simplifier.TestManagement.Models;
 
 public partial class TestCaseModel : ObservableValidator

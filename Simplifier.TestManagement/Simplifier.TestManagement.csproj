@@ -34,8 +34,4 @@
             <_Parameter1>Simplifier.TestManagement.Tests</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Validators\" />
-    </ItemGroup>
 </Project>

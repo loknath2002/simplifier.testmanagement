@@ -6,6 +6,7 @@ using System.Linq;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using Simplifier.TestManagement.Services;
+using Simplifier.TestManagement.Validators;
 using Simplifier.TestManagement.ViewModels;
 using Simplifier.TestManagement.Views;
 

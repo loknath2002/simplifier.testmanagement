@@ -97,7 +97,7 @@
                                      Text="{Binding SelectedTestCase.MetaData.TagsString}" Margin="5" />
 
                             <TextBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" PlaceholderText="Description"
-                                     Text="{Binding SelectedTestCase.Description}" Margin="5" />
+                                     Text="{Binding SelectedTestCase.Description}" Margin="5" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap" />
                         </Grid>
                         <Grid Grid.Row="1" RowDefinitions="*, Auto">
                             <TabControl Grid.Row="0" Margin="10" SelectedIndex="{Binding SelectedTabIndex}">

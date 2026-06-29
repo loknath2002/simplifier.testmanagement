@@ -79,7 +79,10 @@ public class MarkdownReadAndWriteImplV1Test
         TestCaseModel aModel = new TestCaseModel(new TestProjectModel("TestProject"), new TestCaseMetadataModel());
         aModel.Id = 1;
         aModel.Name = "Test Case 1";
-        aModel.Description = "Test case description goes here.";
+        aModel.Description = """
+                             Test case description goes here.
+                             ## Description
+                             """;
         aModel.Precondition = """
                               Test case preconditions go here.
                               * User is logged out.
