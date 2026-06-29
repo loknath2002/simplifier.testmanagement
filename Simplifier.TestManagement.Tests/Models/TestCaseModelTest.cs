@@ -15,7 +15,7 @@ public class TestCaseModelTest
     [Test]
     public void TestCaseModel_HasUniqueId()
     {
-        var project = new TestProjectModel("TestPath");
+        var project = TestProjectModel.FromFullPath("TestPath");
         var metaData = new TestCaseMetadataModel();
         var tc1 = new TestCaseModel(project, metaData);
         var tc2 = new TestCaseModel(project, metaData);
@@ -28,7 +28,7 @@ public class TestCaseModelTest
     [Test]
     public void TestCaseModel_DeepCopy_CreatesIndependentCopy()
     {
-        var project = new TestProjectModel("TestPath");
+        var project = TestProjectModel.FromFullPath("TestPath");
         var metaData = new TestCaseMetadataModel();
         var tc = new TestCaseModel(project, metaData)
         {
@@ -63,7 +63,7 @@ public class TestCaseModelTest
     [Test]
     public void TestCaseModel_DuplicateId_ValidationFails()
     {
-        var project = new TestProjectModel("TestPath");
+        var project = TestProjectModel.FromFullPath("TestPath");
         var metaData = new TestCaseMetadataModel();
         var tc1 = new TestCaseModel(project, metaData) { Id = 1 };
         var tc2 = new TestCaseModel(project, metaData) { Id = 1 };

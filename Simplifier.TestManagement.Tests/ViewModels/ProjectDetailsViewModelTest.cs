@@ -16,7 +16,7 @@ public class ProjectDetailsViewModelTest
         // Arrange
         var mockStorageService = new Mock<IStorageService>();
         var mockRendererFactory = new Mock<ITestCaseRendererFactory>();
-        var project = new TestProjectModel("TestPath");
+        var project = TestProjectModel.FromFullPath("TestPath");
         var tests = new List<TestCaseModel>
         {
             new TestCaseModel(project, new TestCaseMetadataModel()) { Id = 1, Name = "Test1" },

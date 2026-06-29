@@ -2,7 +2,9 @@
 
 namespace Simplifier.TestManagement.Services;
 
-public interface IDialogService
+public interface IPlatformServices
 {
     Task<string?> OpenFolderDialogAsync();
+    
+    bool CreateDirectory(string theFullPath);
 }

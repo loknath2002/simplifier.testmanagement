@@ -14,11 +14,12 @@ namespace Simplifier.TestManagement
         {
             collection.AddTransient<ProjectDetailsViewModel>();
             collection.AddTransient<WelcomeToSSTMViewModel>();
+            collection.AddTransient<ProjectCreationWizardViewModel>();
             collection.AddSingleton<MainWindowViewModel>();
             collection.AddSingleton<IViewNavigation>(provider => provider.GetRequiredService<MainWindowViewModel>());
             collection.AddSingleton<ITestCaseRendererFactory, TestCaseRendererFactory>();
             collection.AddSingleton<IStorageService, StorageServiceImpl>();
-            collection.AddSingleton<IDialogService, DialogService>();
+            collection.AddSingleton<IPlatformServices, PlatformServices>();
             collection.AddSingleton<ISharedContext, SharedContext>();
         }
     }

@@ -45,7 +45,7 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
 
     public TestCaseModel Read(TestCaseTarget theModelToRead)
     {
-        var aTestProjectModel = new TestProjectModel(Path.GetDirectoryName(theModelToRead.FileName));
+        var aTestProjectModel = TestProjectModel.FromFullPath(Path.GetDirectoryName(theModelToRead.FileName));
         var aModel = new TestCaseModel(aTestProjectModel, new TestCaseMetadataModel());
         string[] aLines = theModelToRead.Content.ToUnixEol().Split(NewLineExtensions.EOLC);
         string aDescHeader = $"## {DescriptionTag}";

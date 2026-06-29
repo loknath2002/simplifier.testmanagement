@@ -60,7 +60,7 @@ public partial class TestCaseModel : ObservableValidator
         string regexSearch = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
         var r = new Regex($"[{Regex.Escape(regexSearch)}]");
         var aSanatized = r.Replace(this.Name, "");
-        return PathExtensions.CombineWithForwardSlash(this.Project.DirectoryPath, $"TC_{this.Id}_{aSanatized}.md".Replace("-", "_").Replace(" ", "_"));
+        return PathExtensions.CombineWithForwardSlash(this.Project.ProjectPath, $"TC_{this.Id}_{aSanatized}.md".Replace("-", "_").Replace(" ", "_"));
     }
     
     public bool Validate()

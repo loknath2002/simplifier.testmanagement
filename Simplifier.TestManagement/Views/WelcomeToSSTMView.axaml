@@ -9,6 +9,7 @@
              x:Class="Simplifier.TestManagement.Views.WelcomeToSSTMView">
     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="40" Margin="40">
         <TextBlock Text="{Binding Greeting}" FontSize="32" FontWeight="Bold" HorizontalAlignment="Center"/>
+        <TextBlock Text="{Binding SubGreeting}" FontSize="16" HorizontalAlignment="Center" Margin="0, -20, 0, 0"/>
         
         <StackPanel Orientation="Horizontal" Spacing="20" HorizontalAlignment="Center">
             <suki:GlassCard IsInteractive="True" Command="{Binding CreateNewProjectCommand}" Width="200" Height="150">

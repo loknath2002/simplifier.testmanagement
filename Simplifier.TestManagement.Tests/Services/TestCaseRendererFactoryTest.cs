@@ -12,7 +12,7 @@ public class TestCaseRendererFactoryTest
     public void Create_FromModel_ReturnsMarkdownV1_ForSSTM1()
     {
         var factory = new TestCaseRendererFactory();
-        var model = new TestCaseModel(new TestProjectModel("TestPath"), new TestCaseMetadataModel());
+        var model = new TestCaseModel(TestProjectModel.FromFullPath("TestPath"), new TestCaseMetadataModel());
         
         var renderer = factory.Create(model);
         

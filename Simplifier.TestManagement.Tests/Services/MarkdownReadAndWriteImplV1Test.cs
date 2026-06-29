@@ -76,7 +76,7 @@ public class MarkdownReadAndWriteImplV1Test
     [Test]
     public void Verify_V1_TestCaseRenderer_Writes_Valid_Markdown()
     {
-        TestCaseModel aModel = new TestCaseModel(new TestProjectModel("TestProject"), new TestCaseMetadataModel());
+        TestCaseModel aModel = new TestCaseModel(TestProjectModel.FromFullPath("TestProject"), new TestCaseMetadataModel());
         aModel.Id = 1;
         aModel.Name = "Test Case 1";
         aModel.Description = """
@@ -133,7 +133,7 @@ public class MarkdownReadAndWriteImplV1Test
         var aRenderer = new MarkdownReadAndWriteImplV1();
         
         // Setup a model with a newline in a test step
-        var aModel = new TestCaseModel(new TestProjectModel("TestProject"), new TestCaseMetadataModel());
+        var aModel = new TestCaseModel(TestProjectModel.FromFullPath("TestProject"), new TestCaseMetadataModel());
         aModel.Id = 1;
         aModel.Name = "Test Case Newline";
         aModel.Description = "Desc";
@@ -168,7 +168,7 @@ public class MarkdownReadAndWriteImplV1Test
         var aRenderer = new MarkdownReadAndWriteImplV1();
         
         // Setup a model with a CRLF newline in a test step
-        var aModel = new TestCaseModel(new TestProjectModel("TestProject"), new TestCaseMetadataModel());
+        var aModel = new TestCaseModel(TestProjectModel.FromFullPath("TestProject"), new TestCaseMetadataModel());
         aModel.Id = 1;
         aModel.Name = "Test Case CRLF Newline";
         aModel.Description = "Desc";
@@ -204,7 +204,7 @@ public class MarkdownReadAndWriteImplV1Test
         var aRenderer = new MarkdownReadAndWriteImplV1();
         
         // Setup a model with a newline in a run history note
-        var aModel = new TestCaseModel(new TestProjectModel("TestProject"), new TestCaseMetadataModel());
+        var aModel = new TestCaseModel(TestProjectModel.FromFullPath("TestProject"), new TestCaseMetadataModel());
         aModel.Id = 1;
         aModel.Name = "Test Case Run History Newline";
         aModel.Description = "Desc";

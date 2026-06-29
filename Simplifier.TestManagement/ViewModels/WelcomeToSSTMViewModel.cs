@@ -2,8 +2,9 @@
 // * Copyright (c) 2026 Loknath, Quantum Technology
 // * All rights reserved.
 // */
-using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Simplifier.TestManagement.Models;
@@ -12,7 +13,7 @@ namespace Simplifier.TestManagement.ViewModels;
 
 public partial class WelcomeToSSTMViewModel : ViewModelBase
 {
-    private readonly IDialogService myDialogService;
+    private readonly IPlatformServices platformServices;
     private readonly ProjectDetailsViewModel myProjectDetailsViewModel;
     private readonly IViewNavigation myViewNavigation;
 
@@ -20,35 +21,35 @@ public partial class WelcomeToSSTMViewModel : ViewModelBase
     private string? _Greeting = "Welcome to Super Simple Test Management!";
 
     [ObservableProperty]
-    private ObservableCollection<string> _RecentProjects = new() { "Project A", "Project B", "Project C" };
+    private ObservableCollection<string> _RecentProjects = new ObservableCollection<string> { "Project A", "Project B", "Project C" };
+
+    [ObservableProperty]
+    private string? _SubGreeting = "A Markdown based test case management tool";
+
+    private readonly ProjectCreationWizardViewModel myProjectCreationWizardViewModel;
 
     public WelcomeToSSTMViewModel()
     {
 
     }
 
-    public WelcomeToSSTMViewModel(IViewNavigation theViewNavigation, IDialogService theDialogService, ProjectDetailsViewModel theProjectDetailsViewModel)
+    public WelcomeToSSTMViewModel(IViewNavigation theViewNavigation, IPlatformServices thePlatformServices, ProjectDetailsViewModel theProjectDetailsViewModel, ProjectCreationWizardViewModel theProjectCreationWizardViewModel)
     {
         myViewNavigation = theViewNavigation;
-        myDialogService = theDialogService;
+        platformServices = thePlatformServices;
         myProjectDetailsViewModel = theProjectDetailsViewModel;
+        myProjectCreationWizardViewModel = theProjectCreationWizardViewModel;
     }
 
     [RelayCommand]
     public async Task CreateNewProject()
     {
-        string? path = await myDialogService.OpenFolderDialogAsync();
-        if (string.IsNullOrEmpty(path))
-        {
-            return;
-        }
-
-        CreateTestModelAndNavigate(path);
+        myViewNavigation.Navigate(this, myProjectCreationWizardViewModel);
     }
-    
-    private void CreateTestModelAndNavigate(string path)
+
+    private void CreateTestModelAndNavigate(string thePath)
     {
-        var project = new TestProjectModel(path);
+        var project = TestProjectModel.FromFullPath(thePath);
         if (!project.Validate())
         {
             return;
@@ -59,8 +60,14 @@ public partial class WelcomeToSSTMViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public void OpenExistingProject()
+    public async void OpenExistingProject()
     {
+        string? theExistingPath = await platformServices.OpenFolderDialogAsync();
+        if (string.IsNullOrEmpty(theExistingPath))
+        {
+            return;
+        }
 
+        CreateTestModelAndNavigate(theExistingPath);
     }
 }

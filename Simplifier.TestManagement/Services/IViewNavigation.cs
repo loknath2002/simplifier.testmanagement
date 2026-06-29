@@ -8,4 +8,5 @@ namespace Simplifier.TestManagement.Services;
 public interface IViewNavigation
 {
     void Navigate(ViewModelBase? theFrom, ViewModelBase theTo);
+    void NavigateBack(ViewModelBase theFrom);
 }
