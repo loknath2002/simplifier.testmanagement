@@ -19,6 +19,12 @@ public partial class TestStepResultModel : ObservableValidator, IEquatable<TestS
     [ObservableProperty]
     private int _StepNumber = -1;
 
+    [ObservableProperty]
+    private string _Procedure = string.Empty;
+
+    [ObservableProperty]
+    private string _ExpectedResult = string.Empty;
+
     public TestStepResultModel(int theStepNumber, TestStepStatus theStatus)
     {
         StepNumber = theStepNumber;
@@ -27,7 +33,7 @@ public partial class TestStepResultModel : ObservableValidator, IEquatable<TestS
 
     public override string ToString()
     {
-        return $"{StepNumber} | {Status} | {Note}";
+        return $"{StepNumber} | {Status} | {Note} | {Procedure} | {ExpectedResult}";
     }
     
     public bool Equals(TestStepResultModel? other)
@@ -36,7 +42,8 @@ public partial class TestStepResultModel : ObservableValidator, IEquatable<TestS
             return false;
         if (ReferenceEquals(this, other))
             return true;
-        return Note == other.Note && Status == other.Status && StepNumber == other.StepNumber;
+        return Note == other.Note && Status == other.Status && StepNumber == other.StepNumber
+               && Procedure == other.Procedure && ExpectedResult == other.ExpectedResult;
     }
     
     public override bool Equals(object? obj)
@@ -52,7 +59,7 @@ public partial class TestStepResultModel : ObservableValidator, IEquatable<TestS
     
     public override int GetHashCode()
     {
-        return HashCode.Combine(Note, (int)Status, StepNumber);
+        return HashCode.Combine(Note, (int)Status, StepNumber, Procedure, ExpectedResult);
     }
 }
 

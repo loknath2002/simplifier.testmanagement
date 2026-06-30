@@ -22,6 +22,11 @@ public static class NewLineExtensions
     {
         return theLine.ToUnixEol().Replace("\n", "<br>");
     }
+
+    public static string SanitizeMarkdownColumn(this string theLine)
+    {
+        return theLine.Replace("<br>", EOL);
+    }
 }
 
 public static class PathExtensions
@@ -58,7 +63,9 @@ public static class TestCaseExtensions
             {
                 runCopy.Results.Add(new TestStepResultModel(result.StepNumber, result.Status)
                 {
-                    Note = result.Note
+                    Note = result.Note,
+                    Procedure = result.Procedure,
+                    ExpectedResult = result.ExpectedResult
                 });
             }
             copy.TestRuns.Add(runCopy);

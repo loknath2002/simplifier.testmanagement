@@ -43,21 +43,21 @@
 
 ### Run-2: 01-Jan-2021
 
-| Step | Status  | Notes           |
-| ---- | ------- | --------------- |
-| 1    | Pass    |                 |
-| 2    | Fail    | 2nd login fails |
-| 3    | Started |                 |
-| 4    | Pending |                 |
+| Step | Status  | Notes           | Procedure                                             | Expected Result                                                           |
+| ---- | ------- | --------------- | ----------------------------------------------------- | ------------------------------------------------------------------------- |
+| 1    | Pass    |                 | Navigate to the application login screen.             | Login form is displayed with Username and Password fields.                |
+| 2    | Fail    | 2nd login fails | Navigate to the application login screen.             | Login form is displayed with Username and Password fields.                |
+| 3    | Started |                 | Enter valid `username` and `password` from Test Data. | Characters are masked in the password field. Login button becomes active. |
+| 4    | Pending |                 | Click the "Login" button.                             | User is redirected to the dashboard. Session token is stored locally.     |
 
 ### Run-1: 01-Jan-2020
 
-| Step | Status | Notes |
-| ---- | ------ | ----- |
-| 1    | Pass   |       |
-| 2    | Pass   |       |
-| 3    | Pass   |       |
-| 4    | Pass   |       |
+| Step | Status | Notes | Procedure                                             | Expected Result                                                           |
+| ---- | ------ | ----- | ----------------------------------------------------- | ------------------------------------------------------------------------- |
+| 1    | Pass   |       | Navigate to the application login screen.             | Login form is displayed with Username and Password fields.                |
+| 2    | Pass   |       | Navigate to the application login screen.             | Login form is displayed with Username and Password fields.                |
+| 3    | Pass   |       | Enter valid `username` and `password` from Test Data. | Characters are masked in the password field. Login button becomes active. |
+| 4    | Pass   |       | Click the "Login" button.                             | User is redirected to the dashboard. Session token is stored locally.     |
 
 #### Internal Program Data [DO NOT CHANGE OR REMOVE]
 
