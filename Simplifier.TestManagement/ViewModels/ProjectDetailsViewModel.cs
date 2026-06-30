@@ -43,6 +43,8 @@ public partial class ProjectDetailsViewModel : ViewModelBase
     public ObservableCollection<TestCaseModel> Tests { get; } = new ObservableCollection<TestCaseModel>();
 
     public IEnumerable<TestCaseStatus> TestCaseStatuses => Enum.GetValues<TestCaseStatus>();
+    
+    public IEnumerable<TestStepStatus> TestStepStatuses => Enum.GetValues<TestStepStatus>();
 
     partial void OnSelectedTabIndexChanged(int value)
     {
@@ -54,7 +56,7 @@ public partial class ProjectDetailsViewModel : ViewModelBase
         mySharedContext.OriginalTestCases.Clear();
         Tests.Clear();
         CurrentProject = project;
-        foreach (TestCaseModel aModel in myStorageService.Load(project.DirectoryPath))
+        foreach (TestCaseModel aModel in myStorageService.Load(project.ProjectPath))
         {
             AddToVisibleAndInvisibleLists(aModel);
         }
