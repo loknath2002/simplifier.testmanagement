@@ -27,14 +27,16 @@ public partial class WelcomeToSSTMViewModel : ViewModelBase
     private string? _SubGreeting = "A Markdown based test case management tool";
 
     private readonly ProjectCreationWizardViewModel myProjectCreationWizardViewModel;
+    private readonly ISharedContext mySharedContext;
 
     public WelcomeToSSTMViewModel()
     {
 
     }
 
-    public WelcomeToSSTMViewModel(IViewNavigation theViewNavigation, IPlatformServices thePlatformServices, ProjectDetailsViewModel theProjectDetailsViewModel, ProjectCreationWizardViewModel theProjectCreationWizardViewModel)
+    public WelcomeToSSTMViewModel(ISharedContext theSharedContext, IViewNavigation theViewNavigation, IPlatformServices thePlatformServices, ProjectDetailsViewModel theProjectDetailsViewModel, ProjectCreationWizardViewModel theProjectCreationWizardViewModel)
     {
+        mySharedContext  = theSharedContext;
         myViewNavigation = theViewNavigation;
         platformServices = thePlatformServices;
         myProjectDetailsViewModel = theProjectDetailsViewModel;
@@ -55,8 +57,8 @@ public partial class WelcomeToSSTMViewModel : ViewModelBase
             return;
         }
 
-        myViewNavigation.Navigate(this, myProjectDetailsViewModel);
         myProjectDetailsViewModel.LoadTests(project);
+        myViewNavigation.Navigate(this, myProjectDetailsViewModel);
     }
 
     [RelayCommand]

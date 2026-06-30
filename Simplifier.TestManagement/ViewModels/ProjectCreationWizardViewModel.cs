@@ -22,8 +22,11 @@ public partial class ProjectCreationWizardViewModel : ViewModelBase
     [ObservableProperty]
     private TestProjectModel _Project = new TestProjectModel();
 
-    public ProjectCreationWizardViewModel(IPlatformServices thePatformServices, IViewNavigation theNavigation, ProjectDetailsViewModel theProjectDetailsViewModel)
+    private readonly ISharedContext mySharedContext;
+
+    public ProjectCreationWizardViewModel(ISharedContext theSharedContext, IPlatformServices thePatformServices, IViewNavigation theNavigation, ProjectDetailsViewModel theProjectDetailsViewModel)
     {
+        mySharedContext = theSharedContext;
         myplatformServices = thePatformServices;
         myNavigation = theNavigation;
         myProjectDetailsViewModel = theProjectDetailsViewModel;
@@ -58,7 +61,8 @@ public partial class ProjectCreationWizardViewModel : ViewModelBase
             // TODO : Show message saying that a project with the same name already exists
             return;
         }
-        
+
+        myProjectDetailsViewModel.LoadTests(Project);
         myNavigation.Navigate(this, myProjectDetailsViewModel);
     }
 }

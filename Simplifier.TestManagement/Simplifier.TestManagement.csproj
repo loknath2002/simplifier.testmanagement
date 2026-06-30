@@ -34,4 +34,10 @@
             <_Parameter1>Simplifier.TestManagement.Tests</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Views\ProjectCreationWizardView.axaml.cs">
+        <DependentUpon>ProjectCreationWizardView.axaml</DependentUpon>
+      </Compile>
+    </ItemGroup>
 </Project>
