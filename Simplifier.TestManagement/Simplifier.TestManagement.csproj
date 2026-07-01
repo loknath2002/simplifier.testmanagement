@@ -9,13 +9,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <AvaloniaResource Include="Assets\**"/>
+        <AvaloniaResource Include="Assets\**" />
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Avalonia" Version="12.0.5" />
-        <PackageReference Include="Avalonia.Desktop" Version="12.0.5"/>
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.5"/>
+        <PackageReference Include="Avalonia.Desktop" Version="12.0.5" />
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.5" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
         <PackageReference Include="Avalonia.Diagnostics" Version="11.3.18">
             <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
@@ -27,6 +27,7 @@
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
         <PackageReference Include="Simplifier.Serilog" Version="1.0.4" />
         <PackageReference Include="SukiUI" Version="7.0.1" />
+        <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.9" />
     </ItemGroup>
 
     <ItemGroup>
@@ -39,5 +40,18 @@
       <Compile Update="Views\ProjectCreationWizardView.axaml.cs">
         <DependentUpon>ProjectCreationWizardView.axaml</DependentUpon>
       </Compile>
+      <Compile Update="Properties\Settings.Designer.cs">
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Settings.settings</DependentUpon>
+        <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      </Compile>
+      <Compile Remove="Converters\PathToFolderNameConverter.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="Properties\Settings.settings">
+        <Generator>SettingsSingleFileGenerator</Generator>
+        <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+      </None>
     </ItemGroup>
 </Project>

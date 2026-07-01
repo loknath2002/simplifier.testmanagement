@@ -1,11 +1,12 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Simplifier.TestManagement.ViewModels"
+             xmlns:models="using:Simplifier.TestManagement.Models"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:suki="https://github.com/kikipoulet/SukiUI"
              mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
-            x:DataType="vm:WelcomeToSSTMViewModel"
+             x:DataType="vm:WelcomeToSSTMViewModel"
              x:Class="Simplifier.TestManagement.Views.WelcomeToSSTMView">
     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="40" Margin="40">
         <TextBlock Text="{Binding Greeting}" FontSize="32" FontWeight="Bold" HorizontalAlignment="Center"/>
@@ -22,8 +23,19 @@
         
         <suki:GlassCard MinWidth="420">
             <StackPanel Margin="20">
-                <TextBlock  Text="Recent Projects" FontSize="20" FontWeight="Bold" Margin="0, 0, 0, 10"/>
-                <ListBox ItemsSource="{Binding RecentProjects}" Background="Transparent"/>
+                <TextBlock Text="Recent Projects" FontSize="20" FontWeight="Bold" Margin="0, 0, 0, 10"/>
+                <ListBox ItemsSource="{Binding RecentProjects}"
+                         SelectedItem="{Binding SelectedRecentProject}"
+                         Background="Transparent">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="models:TestProjectModel">
+                            <StackPanel ToolTip.Tip="{Binding ProjectPath}">
+                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding DirectoryPath}" FontSize="11" Opacity="0.6"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </StackPanel>
         </suki:GlassCard>
     </StackPanel>

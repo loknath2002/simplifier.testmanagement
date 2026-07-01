@@ -62,6 +62,7 @@ public partial class ProjectCreationWizardViewModel : ViewModelBase
             return;
         }
 
+        WelcomeToSSTMViewModel.AddAndSaveRecentProject(Project.ProjectPath);
         myProjectDetailsViewModel.LoadTests(Project);
         myNavigation.Navigate(this, myProjectDetailsViewModel);
     }
