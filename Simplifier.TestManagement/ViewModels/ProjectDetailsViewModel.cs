@@ -29,6 +29,12 @@ public partial class ProjectDetailsViewModel : ViewModelBase
     [ObservableProperty]
     private TestCaseModel? _SelectedTestCase;
 
+    [ObservableProperty]
+    private TestCaseModel? _SelectedRunTestCase;
+
+    [ObservableProperty]
+    private ObservableCollection<TestStepResultModel> _ActiveRunSteps = new ObservableCollection<TestStepResultModel>();
+
     private readonly LoggerDetail myLogDetail = new LoggerDetail(typeof(ProjectDetailsViewModel));
 
     public ProjectDetailsViewModel(IStorageService storageService, ITestCaseRendererFactory rendererFactory, ISharedContext sharedContext)
@@ -180,5 +186,35 @@ public partial class ProjectDetailsViewModel : ViewModelBase
     private void DeleteTestCase()
     {
         // Implementation for deleting a test case
+    }
+
+    partial void OnSelectedRunTestCaseChanged(TestCaseModel? value)
+    {
+        ActiveRunSteps.Clear();
+        if (value == null) return;
+        foreach (TestStepModel step in value.Steps)
+        {
+            ActiveRunSteps.Add(new TestStepResultModel(step.Number, TestStepStatus.Pending)
+            {
+                Procedure = step.Procedure,
+                ExpectedResult = step.ExpectedResult
+            });
+        }
+    }
+
+    [RelayCommand]
+    private void SaveRun()
+    {
+        if (SelectedRunTestCase == null || ActiveRunSteps.Count == 0) return;
+
+        var run = new TestRun(DateOnly.FromDateTime(DateTime.Now));
+        foreach (TestStepResultModel result in ActiveRunSteps)
+        {
+            run.Results.Add(result);
+        }
+        SelectedRunTestCase.TestRuns.Add(run);
+
+        // Re-initialize steps for a fresh run
+        OnSelectedRunTestCaseChanged(SelectedRunTestCase);
     }
 }

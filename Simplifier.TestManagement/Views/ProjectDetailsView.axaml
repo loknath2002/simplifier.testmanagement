@@ -213,8 +213,100 @@
                 </Grid>
             </Grid>
         </TabItem>
-        <TabItem Header="Run">
-            <!-- Content -->
+        <TabItem Header="Run Test/s">
+            <Grid ColumnDefinitions="20*, 4, 80*">
+                <Grid Grid.Column="0">
+                    <ListBox ItemsSource="{Binding Tests}" SelectedItem="{Binding SelectedRunTestCase}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:TestCaseModel">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Id, StringFormat='TC-{0}'}" FontSize="10" />
+                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+                <GridSplitter Grid.Column="1" Background="Black" ResizeDirection="Columns" />
+                <Grid Grid.Column="2">
+                    <!-- Placeholder when no test case is selected -->
+                    <StackPanel IsVisible="{Binding SelectedRunTestCase, Converter={x:Static ObjectConverters.IsNull}}"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Spacing="20">
+                        <suki:GlassCard>
+                            <StackPanel Spacing="10" Margin="20">
+                                <TextBlock Text="No Test Case Selected"
+                                           FontSize="20"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center" />
+                                <TextBlock Text="Please select a test case from the list on the left to start a run."
+                                           TextWrapping="Wrap"
+                                           MaxWidth="400"
+                                           HorizontalAlignment="Center"
+                                           TextAlignment="Center"
+                                           Foreground="Gray" />
+                            </StackPanel>
+                        </suki:GlassCard>
+                    </StackPanel>
+
+                    <!-- Run UI visible when a test case is selected -->
+                    <Grid RowDefinitions="*, Auto"
+                          IsVisible="{Binding SelectedRunTestCase, Converter={x:Static ObjectConverters.IsNotNull}}">
+
+                        <!-- Empty steps placeholder -->
+                        <StackPanel Grid.Row="0"
+                                    IsVisible="{Binding ActiveRunSteps.Count, Converter={StaticResource CountToBooleanConverter}}"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                    Spacing="20">
+                            <suki:GlassCard>
+                                <StackPanel Spacing="10" Margin="20">
+                                    <TextBlock Text="No Steps Found"
+                                               FontSize="20"
+                                               FontWeight="Bold"
+                                               HorizontalAlignment="Center" />
+                                    <TextBlock Text="The selected test case has no steps. Go to the Organize tab to add steps before running."
+                                               TextWrapping="Wrap"
+                                               MaxWidth="400"
+                                               HorizontalAlignment="Center"
+                                               TextAlignment="Center"
+                                               Foreground="Gray" />
+                                </StackPanel>
+                            </suki:GlassCard>
+                        </StackPanel>
+
+                        <!-- Steps list -->
+                        <ListBox Grid.Row="0"
+                                 ItemsSource="{Binding ActiveRunSteps}"
+                                 IsVisible="{Binding ActiveRunSteps.Count, Converter={StaticResource CountToBooleanConverter}, ConverterParameter=invert}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate x:DataType="models:TestStepResultModel">
+                                    <Grid ColumnDefinitions="Auto, *, *, Auto, *" Margin="5">
+                                        <TextBlock Grid.Column="0" Text="{Binding StepNumber}" VerticalAlignment="Center" Margin="5" Width="30" />
+                                        <TextBox Grid.Column="1" Text="{Binding Procedure}" IsReadOnly="True"
+                                                 VerticalContentAlignment="Top" TextWrapping="Wrap" Margin="5" />
+                                        <TextBox Grid.Column="2" Text="{Binding ExpectedResult}" IsReadOnly="True"
+                                                 VerticalContentAlignment="Top" TextWrapping="Wrap" Margin="5" />
+                                        <ComboBox Grid.Column="3"
+                                                  ItemsSource="{Binding $parent[UserControl].((vm:ProjectDetailsViewModel)DataContext).TestStepStatuses}"
+                                                  SelectedItem="{Binding Status}" Margin="5" />
+                                        <TextBox Grid.Column="4" Text="{Binding Note}" AcceptsReturn="True"
+                                                 VerticalContentAlignment="Top" PlaceholderText="Notes"
+                                                 TextWrapping="Wrap" Margin="5" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <Grid Grid.Row="1" Margin="25, 0, 25, 10" ColumnDefinitions="*, Auto">
+                            <Button Grid.Column="1" Content="Save Run" Classes="Success Rounded"
+                                    Command="{Binding SaveRunCommand}"
+                                    IsEnabled="{Binding ActiveRunSteps.Count, Converter={StaticResource CountToBooleanConverter}, ConverterParameter=invert}" />
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
         </TabItem>
     </TabControl>
     </DockPanel>
