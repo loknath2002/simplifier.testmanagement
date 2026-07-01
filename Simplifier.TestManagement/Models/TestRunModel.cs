@@ -5,12 +5,14 @@
 using System;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Simplifier.TestManagement.Validators;
 namespace Simplifier.TestManagement.Models;
 
 public partial class TestStepResultModel : ObservableValidator, IEquatable<TestStepResultModel>
 {
 
     [ObservableProperty]
+    [RequiredIfStatusFail]
     private string _Note = string.Empty;
 
     [ObservableProperty]
@@ -31,6 +33,12 @@ public partial class TestStepResultModel : ObservableValidator, IEquatable<TestS
         Status = theStatus;
     }
 
+    internal bool Validate()
+    {
+        ValidateAllProperties();
+        return !HasErrors;
+    }
+    
     public override string ToString()
     {
         return $"{StepNumber} | {Status} | {Note} | {Procedure} | {ExpectedResult}";
