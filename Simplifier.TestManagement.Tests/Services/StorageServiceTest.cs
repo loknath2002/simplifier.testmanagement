@@ -95,4 +95,15 @@ Dataset
         Assert.That(aResults[0].Id, Is.EqualTo(1));
         Assert.That(aResults[0].Name, Is.EqualTo("Test Case"));
     }
+
+    [Test]
+    public void Delete_RemovesFileCorrectly()
+    {
+        string aFilePath = Path.Combine(_tempDir, "test.md");
+        File.WriteAllText(aFilePath, "content");
+        
+        _service.Delete(aFilePath);
+        
+        Assert.That(File.Exists(aFilePath), Is.False);
+    }
 }

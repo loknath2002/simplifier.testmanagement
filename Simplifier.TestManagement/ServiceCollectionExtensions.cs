@@ -6,6 +6,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Simplifier.TestManagement.Services;
 using Simplifier.TestManagement.ViewModels;
+using SukiUI.Dialogs;
 using SukiUI.Toasts;
 namespace Simplifier.TestManagement
 {
@@ -13,6 +14,7 @@ namespace Simplifier.TestManagement
     {
         public static void AddCommonServices(this IServiceCollection collection)
         {
+            collection.AddSingleton<ISukiDialogManager, SukiDialogManager>();
             collection.AddSingleton<ISukiToastManager, SukiToastManager>();
             collection.AddSingleton<IToastMessenger, SukiToastMessenger>();
             collection.AddTransient<ProjectDetailsViewModel>();

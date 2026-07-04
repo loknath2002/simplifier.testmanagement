@@ -41,7 +41,7 @@ public static class TestCaseExtensions
 {
     public static TestCaseModel DeepCopy(this TestCaseModel original)
     {
-        var copy = new TestCaseModel(original.Project, original.MetaData)
+        var aCopy = new TestCaseModel(original.Project, original.MetaData)
         {
             Description = original.Description,
             Id = original.Id,
@@ -53,7 +53,7 @@ public static class TestCaseExtensions
 
         foreach (var step in original.Steps)
         {
-            copy.Steps.Add(new TestStepModel(step.Number, step.Procedure, step.ExpectedResult));
+            aCopy.Steps.Add(new TestStepModel(step.Number, step.Procedure, step.ExpectedResult));
         }
 
         foreach (var run in original.TestRuns)
@@ -68,8 +68,9 @@ public static class TestCaseExtensions
                     ExpectedResult = result.ExpectedResult
                 });
             }
-            copy.TestRuns.Add(runCopy);
+            aCopy.TestRuns.Add(runCopy);
         }
-        return copy;
+        
+        return aCopy;
     }
 }

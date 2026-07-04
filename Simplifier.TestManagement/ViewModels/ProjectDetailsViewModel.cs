@@ -11,6 +11,9 @@ using System.Linq;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System;
+using System.IO;
+using System.Threading.Tasks;
+using Avalonia.Controls.Notifications;
 
 namespace Simplifier.TestManagement.ViewModels;
 
@@ -41,18 +44,20 @@ public partial class ProjectDetailsViewModel : ViewModelBase
     private TestCaseModel? _SelectedTestCase;
 
     private readonly IToastMessenger myToastManager;
+    private readonly IPlatformServices myPlatformServices;
 
     #endregion
 #region Construction / Destruction
 
     public ProjectDetailsViewModel(
         IToastMessenger theToastManager,
-        IStorageService storageService, ITestCaseRendererFactory rendererFactory, ISharedContext sharedContext)
+        IStorageService storageService, ITestCaseRendererFactory rendererFactory, ISharedContext sharedContext, IPlatformServices platformServices)
     {
         myToastManager = theToastManager;
         myStorageService = storageService;
         myRendererFactory = rendererFactory;
         mySharedContext = sharedContext;
+        myPlatformServices = platformServices;
     }
 
 #endregion
@@ -137,9 +142,25 @@ public partial class ProjectDetailsViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void DeleteTestCase()
+    private async Task DeleteTestCase()
     {
-        // Implementation for deleting a test case
+        if (SelectedTestCase == null)
+        {
+            return;
+        }
+
+        bool result = await myPlatformServices.ShowYesNoDialog("Delete Test Case", "Are you sure you want to delete this test case?", NotificationType.Warning).ConfigureAwait(true);
+        if (!result)
+        {
+            return;
+        }
+
+        myStorageService.Delete(SelectedTestCase.StoragePath());
+
+        Tests.Remove(SelectedTestCase);
+        mySharedContext.OriginalTestCases.Remove(SelectedTestCase.UniqueId);
+        SelectedTestCase = null;
+        myToastManager.Success("Deleted", "Test case deleted successfully.");
     }
 
     partial void OnSelectedRunTestCaseChanged(TestCaseModel? value)
@@ -272,7 +293,7 @@ public partial class ProjectDetailsViewModel : ViewModelBase
             return true;
         }
 
-        myStorageService.Save(mySharedContext.OriginalTestCases[aSelectedTestRef.UniqueId].StoragePath(), aSelectedTestRef.StoragePath(), target.Content);
+        myStorageService.Save(mySharedContext.OriginalTestCases[aSelectedTestRef.UniqueId], aSelectedTestRef, target.Content);
         return false;
     }
 

@@ -18,6 +18,7 @@ public class ProjectDetailsViewModelTest
         var mockStorageService = new Mock<IStorageService>();
         var mockRendererFactory = new Mock<ITestCaseRendererFactory>();
         var mockToastMessenger = new Mock<IToastMessenger>();
+        var mockPlatformServices = new Mock<IPlatformServices>();
         var project = TestProjectModel.FromFullPath("TestPath");
         var tests = new List<TestCaseModel>
         {
@@ -26,7 +27,7 @@ public class ProjectDetailsViewModelTest
         };
         mockStorageService.Setup(s => s.Load(It.IsAny<string>())).Returns(tests);
         
-        var viewModel = new ProjectDetailsViewModel(mockToastMessenger.Object, mockStorageService.Object, mockRendererFactory.Object, new SharedContext());
+        var viewModel = new ProjectDetailsViewModel(mockToastMessenger.Object, mockStorageService.Object, mockRendererFactory.Object, new SharedContext(), mockPlatformServices.Object);
         
         // Act
         viewModel.LoadTests(project);

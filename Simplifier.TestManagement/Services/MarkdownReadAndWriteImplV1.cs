@@ -316,8 +316,6 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
             aLinesToSkip++;
             bool aRecording = false;
             int aColumn = 0;
-            int aStart = 0;
-            int aEnd = 0;
             for (int i = 0; i < aLine.Length; i++)
             {
                 if (aLine[i] == '-')

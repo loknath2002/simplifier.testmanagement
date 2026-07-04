@@ -17,5 +17,6 @@
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <TransitioningContentControl Content="{Binding CurrentPage}" />
         <suki:SukiToastHost Name="ToastHost" Position="TopRight"/>
+        <suki:SukiDialogHost Name="DialogHost"/>
     </Grid>
 </suki:SukiWindow>

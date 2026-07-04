@@ -1,15 +1,25 @@
 ﻿using System.IO;
 using System.Linq;
+using System;
 using System.Threading.Tasks;
+using SukiUI.Dialogs;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Notifications;
 using Avalonia.Platform.Storage;
 
 namespace Simplifier.TestManagement.Services;
 
 public class PlatformServices : IPlatformServices
 {
+    private readonly ISukiDialogManager theDialogManager;
+
+    public PlatformServices(ISukiDialogManager theDialogManager)
+    {
+        this.theDialogManager = theDialogManager;
+    }
+    
     public async Task<string?> OpenFolderDialogAsync()
     {
         if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
@@ -40,5 +50,26 @@ public class PlatformServices : IPlatformServices
         {
             return false;   
         }
+    }
+
+    public Task<bool> ShowYesNoDialog(string theTitle, string message, NotificationType theType)
+    {
+        var tcs = new TaskCompletionSource<bool>();
+        var result = theDialogManager.CreateDialog()
+            .WithTitle(theTitle)
+            .WithContent(message)
+            .Dismiss()
+            .ByClickingBackground()
+            .OfType(theType)
+            .WithActionButton("Yes", _ => tcs.TrySetResult(true))
+            .WithActionButton("No", _ => tcs.TrySetResult(false), true)
+            .TryShow();
+        
+        if (!result)
+        {
+            tcs.TrySetResult(false);
+        }
+        
+        return tcs.Task;
     }
 }

@@ -6,27 +6,27 @@ namespace Simplifier.TestManagement;
 
 public class ViewLocator : IDataTemplate
 {
-    public Control? Build(object? param)
+    public Control? Build(object? theParam)
     {
-        if (param is null)
+        if (theParam is null)
             return null;
 
-        string name = param.GetType().FullName!.Replace("ViewModel", "View", StringComparison.Ordinal);
-        var type = Type.GetType(name);
+        string aViewModelName = theParam.GetType().FullName!.Replace("ViewModel", "View", StringComparison.Ordinal);
+        var aViewModelType = Type.GetType(aViewModelName);
 
-        if (type != null)
+        if (aViewModelType != null)
         {
-            return (Control)Activator.CreateInstance(type)!;
+            return (Control)Activator.CreateInstance(aViewModelType)!;
         }
 
         return new TextBlock
         {
-            Text = "Not Found: " + name,
+            Text = "Not Found: " + aViewModelName,
         };
     }
 
-    public bool Match(object? data)
+    public bool Match(object? theInstanceToMatch)
     {
-        return data is ViewModelBase;
+        return theInstanceToMatch is ViewModelBase;
     }
 }
