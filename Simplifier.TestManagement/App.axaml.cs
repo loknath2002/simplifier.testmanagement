@@ -28,12 +28,10 @@ public partial class App : Application
         TestModelDuplicateHandler.SharedContext = services.GetRequiredService<ISharedContext>();
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var mainWindow = new MainWindow()
+            desktop.MainWindow = new MainWindow(services.GetRequiredService<ISukiToastManager>())
             {
                 DataContext = services.GetRequiredService<MainWindowViewModel>()
             };
-            mainWindow.SetToastManager(services.GetRequiredService<ISukiToastManager>());
-            desktop.MainWindow = mainWindow;
             
             services.GetRequiredService<IViewNavigation>().Navigate(null, services.GetRequiredService<WelcomeToSSTMViewModel>());
         }

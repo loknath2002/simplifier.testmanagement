@@ -3,6 +3,7 @@
 // * All rights reserved.
 // */
 using System;
+using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Simplifier.TestManagement.Models;
@@ -25,7 +26,9 @@ public class TestProjectModelTest
     [Test]
     public void TestProjectModelWithInvalidCharacters()
     {
-        var aTestModel = new TestProjectModel("C:\\Invalid|Path", "Invalid?Name");
+        var invalidPathChar = Path.GetInvalidPathChars().First();
+        var invalidNameChar = Path.GetInvalidFileNameChars().First();
+        var aTestModel = new TestProjectModel("Invalid" + invalidPathChar + "Path", "Invalid" + invalidNameChar + "Name");
         Assert.That(aTestModel.Validate(), Is.False);
         Assert.That(aTestModel.GetErrors().Count(x => x.ErrorMessage == "Project path contains invalid characters"), Is.EqualTo(1));
         Assert.That(aTestModel.GetErrors().Count(x => x.ErrorMessage == "Project name contains invalid characters"), Is.EqualTo(1));
@@ -34,16 +37,18 @@ public class TestProjectModelTest
     [Test]
     public void FromFullPath_WithDots_ReturnsCorrectName()
     {
-        var model = TestProjectModel.FromFullPath("C:\\Projects\\MyProject.v1");
+        var path = Path.Combine("Projects", "MyProject.v1");
+        var model = TestProjectModel.FromFullPath(path);
         Assert.That(model.Name, Is.EqualTo("MyProject.v1"));
-        Assert.That(model.DirectoryPath, Is.EqualTo("C:\\Projects"));
+        Assert.That(model.DirectoryPath, Is.EqualTo("Projects"));
     }
 
     [Test]
     public void FromFullPath_WithTrailingSlash_ReturnsCorrectName()
     {
-        var model = TestProjectModel.FromFullPath("C:\\Projects\\MyProject\\");
+        var path = Path.Combine("Projects", "MyProject") + Path.DirectorySeparatorChar;
+        var model = TestProjectModel.FromFullPath(path);
         Assert.That(model.Name, Is.EqualTo("MyProject"));
-        Assert.That(model.DirectoryPath, Is.EqualTo("C:\\Projects"));
+        Assert.That(model.DirectoryPath, Is.EqualTo("Projects"));
     }
 }

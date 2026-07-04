@@ -14,6 +14,7 @@ namespace Simplifier.TestManagement
         public static void AddCommonServices(this IServiceCollection collection)
         {
             collection.AddSingleton<ISukiToastManager, SukiToastManager>();
+            collection.AddSingleton<IToastMessenger, SukiToastMessenger>();
             collection.AddTransient<ProjectDetailsViewModel>();
             collection.AddTransient<WelcomeToSSTMViewModel>();
             collection.AddTransient<ProjectCreationWizardViewModel>();

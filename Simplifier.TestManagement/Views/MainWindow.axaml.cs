@@ -13,7 +13,7 @@ public partial class MainWindow : Window
         InitializeComponent();
     }
 
-    public void SetToastManager(ISukiToastManager toastManager)
+    public MainWindow(ISukiToastManager toastManager) : this()
     {
         ToastHost.Manager = toastManager;
     }

@@ -2,22 +2,17 @@
 // * Copyright (c) 2026 Loknath, Quantum Technology
 // * All rights reserved.
 // */
-using SukiUI.Toasts;
-namespace Simplifier.TestManagement.ViewModels;
-
-#region Using statements
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using Simplifier.Serilog;
-using Simplifier.TestManagement.Models;
 using Simplifier.TestManagement.Services;
+using Simplifier.TestManagement.Models;
+using Simplifier.Serilog;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using System.Linq;
+using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using System;
 
-#endregion
+namespace Simplifier.TestManagement.ViewModels;
 
 public partial class ProjectDetailsViewModel : ViewModelBase
 {
@@ -45,13 +40,13 @@ public partial class ProjectDetailsViewModel : ViewModelBase
     [ObservableProperty]
     private TestCaseModel? _SelectedTestCase;
 
-    private readonly ISukiToastManager myToastManager;
+    private readonly IToastMessenger myToastManager;
 
     #endregion
 #region Construction / Destruction
 
     public ProjectDetailsViewModel(
-        ISukiToastManager theToastManager,
+        IToastMessenger theToastManager,
         IStorageService storageService, ITestCaseRendererFactory rendererFactory, ISharedContext sharedContext)
     {
         myToastManager = theToastManager;
@@ -258,10 +253,7 @@ public partial class ProjectDetailsViewModel : ViewModelBase
         
         AddToVisibleAndInvisibleLists(aSelectedTestRef);
         BuildIndexableIndex();
-        myToastManager.CreateToast()
-            .WithTitle("Saved")
-            .WithContent("Test case saved successfully.")
-            .Queue();
+        myToastManager.Success("Saved", "Test case saved successfully.");
         aTrace.Info("Test case saved successfully.");
     }
     private bool StoreTestCase(TestCaseModel aSelectedTestRef)
