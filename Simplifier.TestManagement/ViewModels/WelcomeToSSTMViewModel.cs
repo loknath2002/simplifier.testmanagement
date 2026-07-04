@@ -18,6 +18,7 @@ public partial class WelcomeToSSTMViewModel : ViewModelBase
     private readonly IPlatformServices platformServices;
     private readonly ProjectDetailsViewModel myProjectDetailsViewModel;
     private readonly IViewNavigation myViewNavigation;
+    private readonly IToastMessenger myToastManager;
 
     [ObservableProperty]
     private string? _Greeting = "Welcome to Super Simple Test Management!";
@@ -33,12 +34,13 @@ public partial class WelcomeToSSTMViewModel : ViewModelBase
 
     private readonly ProjectCreationWizardViewModel myProjectCreationWizardViewModel;
 
-    public WelcomeToSSTMViewModel(IViewNavigation theViewNavigation, IPlatformServices thePlatformServices, ProjectDetailsViewModel theProjectDetailsViewModel, ProjectCreationWizardViewModel theProjectCreationWizardViewModel)
+    public WelcomeToSSTMViewModel(IViewNavigation theViewNavigation, IPlatformServices thePlatformServices, ProjectDetailsViewModel theProjectDetailsViewModel, ProjectCreationWizardViewModel theProjectCreationWizardViewModel, IToastMessenger theToastMessenger)
     {
         myViewNavigation = theViewNavigation;
         platformServices = thePlatformServices;
         myProjectDetailsViewModel = theProjectDetailsViewModel;
         myProjectCreationWizardViewModel = theProjectCreationWizardViewModel;
+        myToastManager = theToastMessenger;
         LoadRecentProjectsFromSettings();
     }
 
@@ -53,13 +55,14 @@ public partial class WelcomeToSSTMViewModel : ViewModelBase
     [RelayCommand]
     public async Task OpenExistingProject()
     {
-        string? theExistingPath = await platformServices.OpenFolderDialogAsync();
+        string? theExistingPath = await platformServices.OpenFolderDialogAsync().ConfigureAwait(false);
         if (string.IsNullOrEmpty(theExistingPath))
         {
             return;
         }
 
         AddAndSaveRecentProject(theExistingPath);
+        myToastManager.Success("Project Opened", "Project opened successfully.");
         NavigateToProject(TestProjectModel.FromFullPath(theExistingPath));
     }
 

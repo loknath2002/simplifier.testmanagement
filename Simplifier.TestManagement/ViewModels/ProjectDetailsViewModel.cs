@@ -170,6 +170,7 @@ public partial class ProjectDetailsViewModel : ViewModelBase
         }
 
         SelectedTestCase.Steps.Remove(step);
+        myToastManager.Success("Step Removed", "Test step removed successfully.");
 
         for (int i = 0; i < SelectedTestCase.Steps.Count; i++)
         {
@@ -184,6 +185,7 @@ public partial class ProjectDetailsViewModel : ViewModelBase
         TestCaseModel? aModel = SelectedRunTestCase;
         if (aModel == null || ActiveRunSteps.Count == 0)
         {
+            myToastManager.Warning("Save aborted", "No test case selected or no active steps.");
             aTrace.Warning("SaveRun aborted: no test case selected or no active steps.");
             return;
         }
@@ -202,6 +204,7 @@ public partial class ProjectDetailsViewModel : ViewModelBase
 
         if (!aValid)
         {
+            myToastManager.Warning("Save aborted", "One or more step results failed validation.");
             aTrace.Warning("SaveRun aborted: one or more step results failed validation.");
             return;
         }
@@ -214,6 +217,7 @@ public partial class ProjectDetailsViewModel : ViewModelBase
 
         aModel.TestRuns.Add(aRun);
         StoreTestCase(aModel);
+        myToastManager.Success("Saved", "Test run saved successfully.");
         OnSelectedRunTestCaseChanged(SelectedRunTestCase);
     }
 
@@ -248,6 +252,7 @@ public partial class ProjectDetailsViewModel : ViewModelBase
 
         if (StoreTestCase(aSelectedTestRef))
         {
+            myToastManager.Error("Save Failed", "Could not save the test case.");
             return;
         }
         

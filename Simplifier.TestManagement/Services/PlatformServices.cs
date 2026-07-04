@@ -17,7 +17,7 @@ public class PlatformServices : IPlatformServices
             var topLevel = TopLevel.GetTopLevel(desktop.MainWindow);
             if (topLevel != null)
             {
-                var folder = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions());
+                var folder = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()).ConfigureAwait(false);
                 return folder.FirstOrDefault()?.TryGetLocalPath();
             }
         }

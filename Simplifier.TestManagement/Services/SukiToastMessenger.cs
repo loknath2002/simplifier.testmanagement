@@ -1,3 +1,4 @@
+using System;
 using Avalonia.Controls.Notifications;
 using SukiUI.Toasts;
 
@@ -6,23 +7,23 @@ namespace Simplifier.TestManagement.Services;
 public class SukiToastMessenger(ISukiToastManager myToastManager) : IToastMessenger
 {
 
-    public void Info(string theTitle, string theMessage)
+    public void Info(string theTitle, string theMessage, TimeSpan? theTimeout = null)
     {
-        myToastManager.CreateToast().WithTitle(theTitle).WithContent(theMessage).OfType(NotificationType.Information).Queue();
+        myToastManager.CreateToast().Dismiss().After(theTimeout ?? TimeSpan.FromSeconds(4)).WithTitle(theTitle).WithContent(theMessage).OfType(NotificationType.Information).Queue();
     }
 
-    public void Error(string theTitle, string theMessage)
+    public void Error(string theTitle, string theMessage, TimeSpan? theTimeout = null)
     {
-        myToastManager.CreateToast().WithTitle(theTitle).WithContent(theMessage).OfType(NotificationType.Error).Queue();
+        myToastManager.CreateToast().Dismiss().After(theTimeout ?? TimeSpan.FromSeconds(4)).WithTitle(theTitle).WithContent(theMessage).OfType(NotificationType.Error).Queue();
     }
 
-    public void Warning(string theTitle, string theMessage)
+    public void Warning(string theTitle, string theMessage, TimeSpan? theTimeout = null)
     {
-        myToastManager.CreateToast().WithTitle(theTitle).WithContent(theMessage).OfType(NotificationType.Warning).Queue();
+        myToastManager.CreateToast().Dismiss().After(theTimeout ?? TimeSpan.FromSeconds(4)).WithTitle(theTitle).WithContent(theMessage).OfType(NotificationType.Warning).Queue();
     }
 
-    public void Success(string theTitle, string theMessage)
+    public void Success(string theTitle, string theMessage, TimeSpan? theTimeout = null)
     {
-        myToastManager.CreateToast().WithTitle(theTitle).WithContent(theMessage).OfType(NotificationType.Success).Queue();
+        myToastManager.CreateToast().Dismiss().After(theTimeout ?? TimeSpan.FromSeconds(4)).WithTitle(theTitle).WithContent(theMessage).OfType(NotificationType.Success).Queue();
     }
 }

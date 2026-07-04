@@ -23,19 +23,21 @@ public partial class ProjectCreationWizardViewModel : ViewModelBase
     private TestProjectModel _Project = new TestProjectModel();
 
     private readonly ISharedContext mySharedContext;
+    private readonly IToastMessenger myToastManager;
 
-    public ProjectCreationWizardViewModel(ISharedContext theSharedContext, IPlatformServices thePatformServices, IViewNavigation theNavigation, ProjectDetailsViewModel theProjectDetailsViewModel)
+    public ProjectCreationWizardViewModel(ISharedContext theSharedContext, IPlatformServices thePatformServices, IViewNavigation theNavigation, ProjectDetailsViewModel theProjectDetailsViewModel, IToastMessenger theToastMessenger)
     {
         mySharedContext = theSharedContext;
         myplatformServices = thePatformServices;
         myNavigation = theNavigation;
         myProjectDetailsViewModel = theProjectDetailsViewModel;
+        myToastManager = theToastMessenger;
     }
 
     [RelayCommand]
     private async Task PickFolder()
     {
-        string? aDirectory = await myplatformServices.OpenFolderDialogAsync();
+        string? aDirectory = await myplatformServices.OpenFolderDialogAsync().ConfigureAwait(false);
         if (aDirectory != null)
         {
             Project.DirectoryPath = aDirectory;
@@ -58,10 +60,11 @@ public partial class ProjectCreationWizardViewModel : ViewModelBase
 
         if (!myplatformServices.CreateDirectory(Project.ProjectPath))
         {
-            // TODO : Show message saying that a project with the same name already exists
+            myToastManager.Error("Creation Failed", "A project with the same name already exists.");
             return;
         }
 
+        myToastManager.Success("Project Created", "Project created successfully.");
         WelcomeToSSTMViewModel.AddAndSaveRecentProject(Project.ProjectPath);
         myProjectDetailsViewModel.LoadTests(Project);
         myNavigation.Navigate(this, myProjectDetailsViewModel);
