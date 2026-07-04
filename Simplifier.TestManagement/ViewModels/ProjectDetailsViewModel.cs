@@ -90,12 +90,8 @@ public partial class ProjectDetailsViewModel : ViewModelBase
     [RelayCommand]
     private void AddStep()
     {
-        if (SelectedTestCase == null)
-        {
-            return;
-        }
 
-        SelectedTestCase.Steps.Add(new TestStepModel(SelectedTestCase.Steps.Count + 1, "", ""));
+        SelectedTestCase?.Steps.Add(new TestStepModel(SelectedTestCase.Steps.Count + 1, "", ""));
     }
 
     private void AddToVisibleAndInvisibleLists(TestCaseModel aNewTestCase)
