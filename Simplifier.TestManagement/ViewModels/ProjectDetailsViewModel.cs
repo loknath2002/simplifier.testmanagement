@@ -2,6 +2,7 @@
 // * Copyright (c) 2026 Loknath, Quantum Technology
 // * All rights reserved.
 // */
+using SukiUI.Toasts;
 namespace Simplifier.TestManagement.ViewModels;
 
 #region Using statements
@@ -44,11 +45,16 @@ public partial class ProjectDetailsViewModel : ViewModelBase
     [ObservableProperty]
     private TestCaseModel? _SelectedTestCase;
 
-#endregion
+    private readonly ISukiToastManager myToastManager;
+
+    #endregion
 #region Construction / Destruction
 
-    public ProjectDetailsViewModel(IStorageService storageService, ITestCaseRendererFactory rendererFactory, ISharedContext sharedContext)
+    public ProjectDetailsViewModel(
+        ISukiToastManager theToastManager,
+        IStorageService storageService, ITestCaseRendererFactory rendererFactory, ISharedContext sharedContext)
     {
+        myToastManager = theToastManager;
         myStorageService = storageService;
         myRendererFactory = rendererFactory;
         mySharedContext = sharedContext;
@@ -57,33 +63,15 @@ public partial class ProjectDetailsViewModel : ViewModelBase
 #endregion
 #region Properties
 
-    public bool IsAddStepVisible
-    {
-        get
-        {
-            return SelectedTabIndex == TestTabIndex;
-        }
-    }
+    public bool IsAddStepVisible => SelectedTabIndex == TestTabIndex;
 
-    public IEnumerable<TestCaseStatus> TestCaseStatuses
-    {
-        get
-        {
-            return Enum.GetValues<TestCaseStatus>();
-        }
-    }
+    public IEnumerable<TestCaseStatus> TestCaseStatuses => Enum.GetValues<TestCaseStatus>();
 
     public ObservableCollection<TestCaseModel> Tests { get; } = new ObservableCollection<TestCaseModel>();
 
-    public IEnumerable<TestStepStatus> TestStepStatuses
-    {
-        get
-        {
-            return Enum.GetValues<TestStepStatus>();
-        }
-    }
+    public IEnumerable<TestStepStatus> TestStepStatuses => Enum.GetValues<TestStepStatus>();
 
-#endregion
+    #endregion
 #region Members
 
     public void LoadTests(TestProjectModel project)
@@ -198,8 +186,8 @@ public partial class ProjectDetailsViewModel : ViewModelBase
     private void SaveRun()
     {
         using var aTrace = new LogScope(myLogDetail);
-
-        if (SelectedRunTestCase == null || ActiveRunSteps.Count == 0)
+        TestCaseModel? aModel = SelectedRunTestCase;
+        if (aModel == null || ActiveRunSteps.Count == 0)
         {
             aTrace.Warning("SaveRun aborted: no test case selected or no active steps.");
             return;
@@ -229,9 +217,8 @@ public partial class ProjectDetailsViewModel : ViewModelBase
             aRun.Results.Add(result);
         }
 
-        SelectedRunTestCase.TestRuns.Add(aRun);
-
-        // Re-initialize steps for a fresh run
+        aModel.TestRuns.Add(aRun);
+        StoreTestCase(aModel);
         OnSelectedRunTestCaseChanged(SelectedRunTestCase);
     }
 
@@ -264,18 +251,33 @@ public partial class ProjectDetailsViewModel : ViewModelBase
             return;
         }
 
+        if (StoreTestCase(aSelectedTestRef))
+        {
+            return;
+        }
+        
+        AddToVisibleAndInvisibleLists(aSelectedTestRef);
+        BuildIndexableIndex();
+        myToastManager.CreateToast()
+            .WithTitle("Saved")
+            .WithContent("Test case saved successfully.")
+            .Queue();
+        aTrace.Info("Test case saved successfully.");
+    }
+    private bool StoreTestCase(TestCaseModel aSelectedTestRef)
+    {
+        using var aTrace = new LogScope(myLogDetail);
         ITestCaseRenderer renderer = myRendererFactory.Create(aSelectedTestRef);
         TestCaseTarget target = renderer.Write(aSelectedTestRef);
         if (!mySharedContext.OriginalTestCases.ContainsKey(aSelectedTestRef.UniqueId))
         {
             aTrace.Error($"Original test case not found: {aSelectedTestRef.UniqueId}");
-            return;
+            return true;
         }
 
         myStorageService.Save(mySharedContext.OriginalTestCases[aSelectedTestRef.UniqueId].StoragePath(), aSelectedTestRef.StoragePath(), target.Content);
-        AddToVisibleAndInvisibleLists(aSelectedTestRef);
-        BuildIndexableIndex();
+        return false;
     }
 
-#endregion
+    #endregion
 }

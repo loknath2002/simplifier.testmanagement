@@ -6,12 +6,14 @@
 using Microsoft.Extensions.DependencyInjection;
 using Simplifier.TestManagement.Services;
 using Simplifier.TestManagement.ViewModels;
+using SukiUI.Toasts;
 namespace Simplifier.TestManagement
 {
     public static class ServiceCollectionExtensions
     {
         public static void AddCommonServices(this IServiceCollection collection)
         {
+            collection.AddSingleton<ISukiToastManager, SukiToastManager>();
             collection.AddTransient<ProjectDetailsViewModel>();
             collection.AddTransient<WelcomeToSSTMViewModel>();
             collection.AddTransient<ProjectCreationWizardViewModel>();

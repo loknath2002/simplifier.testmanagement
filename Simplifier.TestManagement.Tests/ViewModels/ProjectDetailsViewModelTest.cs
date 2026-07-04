@@ -4,6 +4,7 @@ using NUnit.Framework;
 using Simplifier.TestManagement.Models;
 using Simplifier.TestManagement.Services;
 using Simplifier.TestManagement.ViewModels;
+using SukiUI.Toasts;
 
 namespace Simplifier.TestManagement.Tests.ViewModels;
 
@@ -16,6 +17,7 @@ public class ProjectDetailsViewModelTest
         // Arrange
         var mockStorageService = new Mock<IStorageService>();
         var mockRendererFactory = new Mock<ITestCaseRendererFactory>();
+        var mockToastManager = new Mock<ISukiToastManager>();
         var project = TestProjectModel.FromFullPath("TestPath");
         var tests = new List<TestCaseModel>
         {
@@ -24,7 +26,7 @@ public class ProjectDetailsViewModelTest
         };
         mockStorageService.Setup(s => s.Load(It.IsAny<string>())).Returns(tests);
         
-        var viewModel = new ProjectDetailsViewModel(mockStorageService.Object, mockRendererFactory.Object, new SharedContext());
+        var viewModel = new ProjectDetailsViewModel(mockToastManager.Object, mockStorageService.Object, mockRendererFactory.Object, new SharedContext());
         
         // Act
         viewModel.LoadTests(project);

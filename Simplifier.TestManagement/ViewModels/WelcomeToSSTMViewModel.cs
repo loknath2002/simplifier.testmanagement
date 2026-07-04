@@ -29,18 +29,12 @@ public partial class WelcomeToSSTMViewModel : ViewModelBase
     private TestProjectModel? _SelectedRecentProject;
 
     [ObservableProperty]
-    private string? _SubGreeting = "A Markdown based test case management tool";
+    private string? _SubGreeting = "An AI friendly Markdown based test management tool";
 
     private readonly ProjectCreationWizardViewModel myProjectCreationWizardViewModel;
-    private readonly ISharedContext mySharedContext;
 
-    public WelcomeToSSTMViewModel()
+    public WelcomeToSSTMViewModel(IViewNavigation theViewNavigation, IPlatformServices thePlatformServices, ProjectDetailsViewModel theProjectDetailsViewModel, ProjectCreationWizardViewModel theProjectCreationWizardViewModel)
     {
-    }
-
-    public WelcomeToSSTMViewModel(ISharedContext theSharedContext, IViewNavigation theViewNavigation, IPlatformServices thePlatformServices, ProjectDetailsViewModel theProjectDetailsViewModel, ProjectCreationWizardViewModel theProjectCreationWizardViewModel)
-    {
-        mySharedContext  = theSharedContext;
         myViewNavigation = theViewNavigation;
         platformServices = thePlatformServices;
         myProjectDetailsViewModel = theProjectDetailsViewModel;
@@ -57,7 +51,7 @@ public partial class WelcomeToSSTMViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public async void OpenExistingProject()
+    public async Task OpenExistingProject()
     {
         string? theExistingPath = await platformServices.OpenFolderDialogAsync();
         if (string.IsNullOrEmpty(theExistingPath))
@@ -72,17 +66,17 @@ public partial class WelcomeToSSTMViewModel : ViewModelBase
     [RelayCommand]
     public void OpenRecentProject(TestProjectModel project)
     {
-        if (project == null) return;
-
         AddAndSaveRecentProject(project.ProjectPath);
         NavigateToProject(project);
     }
 
-    // ------------------------------------------------------------------ helpers
-
     partial void OnSelectedRecentProjectChanged(TestProjectModel? value)
     {
-        if (value is null) return;
+        if (value is null)
+        {
+            return;
+        }
+        
         OpenRecentProjectCommand.Execute(value);
         // Clear selection so re-selecting the same entry works next time
         SelectedRecentProject = null;

@@ -9,6 +9,7 @@ using Simplifier.TestManagement.Services;
 using Simplifier.TestManagement.Validators;
 using Simplifier.TestManagement.ViewModels;
 using Simplifier.TestManagement.Views;
+using SukiUI.Toasts;
 
 namespace Simplifier.TestManagement;
 
@@ -27,10 +28,12 @@ public partial class App : Application
         TestModelDuplicateHandler.SharedContext = services.GetRequiredService<ISharedContext>();
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new MainWindow()
+            var mainWindow = new MainWindow()
             {
                 DataContext = services.GetRequiredService<MainWindowViewModel>()
             };
+            mainWindow.SetToastManager(services.GetRequiredService<ISukiToastManager>());
+            desktop.MainWindow = mainWindow;
             
             services.GetRequiredService<IViewNavigation>().Navigate(null, services.GetRequiredService<WelcomeToSSTMViewModel>());
         }
