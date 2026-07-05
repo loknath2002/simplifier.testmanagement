@@ -24,6 +24,7 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
     #region Fields
 
     private const string DateFormat = "dd-MMM-yyyy";
+    private const string DateTimeFormat = "dd-MMM-yyyy HH:mm zzz";
     private const string AuthorTag = "Author";
     private const string DatasetTag = "Dataset";
     private const string DateTag = "Date";
@@ -78,7 +79,7 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
         return aModel;
     }
 
-    private void ExtractStepForRunHistory(string theStepsRegion, TestCaseModel theModel, DateOnly theDate)
+    private void ExtractStepForRunHistory(string theStepsRegion, TestCaseModel theModel, DateTime theDate, TestRunStatus theStatus)
     {
         string[] theLines = theStepsRegion.Split(NewLineExtensions.EOLC);
         List<List<string>> aTableColumns = new List<List<string>>();
@@ -93,7 +94,7 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
             throw new TestCaseReadException(ReadExceptionTypes.CorruptTestStepsAndResultsTable);
         }
 
-        var aTestRun = new TestRun(theDate);
+        var aTestRun = new TestRun(theDate, theStatus);
         foreach (List<string> aRow in aTableColumns)
         {
             if (!int.TryParse(aRow[0], out int aRowIndex))
@@ -137,7 +138,8 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
         for (int i = 0; i < aRunMarkers.Count - 1; i++)
         {
             string aStepsRegion = GetRegion(aLines, aRunMarkers[i], aRunMarkers[i + 1], ReadExceptionTypes.MissingRunHistoryRegion);
-            ExtractStepForRunHistory(aStepsRegion, theModel, ReadOutDateFromHistoryTitle(aRunMarkers[i]));
+            var (aDate, aStatus) = ReadOutDateAndStatusFromHistoryTitle(aRunMarkers[i]);
+            ExtractStepForRunHistory(aStepsRegion, theModel, aDate, aStatus);
         }
 
         string aLeftOut = aRunMarkers.Last();
@@ -156,23 +158,37 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
             }
         }
 
-        ExtractStepForRunHistory(aBuilder.ToString(), theModel, ReadOutDateFromHistoryTitle(aLeftOut));
+        var (aLastDate, aLastStatus) = ReadOutDateAndStatusFromHistoryTitle(aLeftOut);
+        ExtractStepForRunHistory(aBuilder.ToString(), theModel, aLastDate, aLastStatus);
     }
     
-    private static DateOnly ReadOutDateFromHistoryTitle(string theLine)
+    private static (DateTime, TestRunStatus) ReadOutDateAndStatusFromHistoryTitle(string theLine)
     {
+        // Format: ### Run-#: dd-MMM-yyyy HH:mm, Status
+        int aColonIndex = theLine.IndexOf(':');
+        if (aColonIndex < 0)
+        {
+            throw new TestCaseReadException(ReadExceptionTypes.CorruptTestRunTitleCorrupt, theLine);
+        }
 
-        string []aParts = theLine.Split(':', StringSplitOptions.RemoveEmptyEntries);
+        string aRemainder = theLine.Substring(aColonIndex + 1).Trim();
+        string[] aParts = aRemainder.Split(',', StringSplitOptions.TrimEntries);
         if (aParts.Length != 2)
         {
             throw new TestCaseReadException(ReadExceptionTypes.CorruptTestRunTitleCorrupt, theLine);
         }
 
-        if (!DateOnly.TryParseExact(aParts[1].Trim(), DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly aDate))
+        if (!DateTime.TryParseExact(aParts[0].Trim(), DateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime aDate))
         {
             throw new TestCaseReadException(ReadExceptionTypes.CorruptTestRunTitleCorrupt, theLine);
         }
-        return aDate;
+
+        if (!Enum.TryParse(aParts[1].Trim(), out TestRunStatus aStatus))
+        {
+            throw new TestCaseReadException(ReadExceptionTypes.CorruptTestRunTitleCorrupt, theLine);
+        }
+
+        return (aDate, aStatus);
     }
 
 
@@ -219,7 +235,7 @@ public class MarkdownReadAndWriteImplV1 : ITestCaseRenderer
             int aRunNumber = theModelToSave.TestRuns.Count;
             foreach (TestRun aRun in theModelToSave.TestRuns)
             {
-                myDocument.Append(new MarkdownHeader($"{RunPrefix}{aRunNumber.ToString(CultureInfo.InvariantCulture)}: {aRun.When.ToString(DateFormat)}", 3));
+                myDocument.Append(new MarkdownHeader($"{RunPrefix}{aRunNumber.ToString(CultureInfo.InvariantCulture)}: {aRun.When.ToString(DateTimeFormat)}, {aRun.Status}", 3));
                 List<MarkdownTableRow> aResultTableRows = [];
                 foreach (TestStepResultModel aResult in aRun.Results)
                 {

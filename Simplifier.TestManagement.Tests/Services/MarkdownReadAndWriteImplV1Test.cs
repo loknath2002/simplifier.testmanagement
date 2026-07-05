@@ -54,8 +54,10 @@ public class MarkdownReadAndWriteImplV1Test
             new TestStepModel(4, "Click the \"Login\" button.", "User is redirected to the dashboard. Session token is stored locally.")
         }));
 
-        Assert.That(aActual.TestRuns[0].When, Is.EqualTo(new DateOnly(2021, 01, 01)));
-        Assert.That(aActual.TestRuns[1].When, Is.EqualTo(new DateOnly(2020, 01, 01)));
+        Assert.That(aActual.TestRuns[0].When, Is.EqualTo(new DateTimeOffset(2021, 01, 01, 14, 30, 0, TimeSpan.FromMinutes(330))));
+        Assert.That(aActual.TestRuns[0].Status, Is.EqualTo(TestRunStatus.Completed));
+        Assert.That(aActual.TestRuns[1].When, Is.EqualTo(new DateTimeOffset(2020, 01, 01, 9, 0, 0, TimeSpan.FromMinutes(330))));
+        Assert.That(aActual.TestRuns[1].Status, Is.EqualTo(TestRunStatus.Completed));
         Assert.That(aActual.TestRuns[0].Results, Is.EqualTo(new ObservableCollection<TestStepResultModel>()
         {
             new TestStepResultModel(1, TestStepStatus.Pass) { Procedure = "Navigate to the application login screen.", ExpectedResult = "Login form is displayed with Username and Password fields." },
@@ -104,7 +106,7 @@ public class MarkdownReadAndWriteImplV1Test
         aModel.Steps.Add(new TestStepModel(){ Number = 4, Procedure = "Click the \"Login\" button.", ExpectedResult = "User is redirected to the dashboard. Session token is stored locally."});
 
         {
-            var aRun = new TestRun(new DateOnly(2021, 01, 01));
+            var aRun = new TestRun(new DateTime(2021, 01, 01, 14, 30, 0), TestRunStatus.Completed);
             aRun.Results.Add(new TestStepResultModel(1, TestStepStatus.Pass) { Procedure = "Navigate to the application login screen.", ExpectedResult = "Login form is displayed with Username and Password fields." });
             aRun.Results.Add(new TestStepResultModel(2, TestStepStatus.Fail) { Note = "2nd login fails", Procedure = "Navigate to the application login screen.", ExpectedResult = "Login form is displayed with Username and Password fields." });
             aRun.Results.Add(new TestStepResultModel(3, TestStepStatus.Started) { Procedure = "Enter valid `username` and `password` from Test Data.", ExpectedResult = "Characters are masked in the password field. Login button becomes active." });
@@ -113,7 +115,7 @@ public class MarkdownReadAndWriteImplV1Test
         }
 
         {
-            var aRun = new TestRun(new DateOnly(2020, 01, 01));
+            var aRun = new TestRun(new DateTime(2020, 01, 01, 9, 0, 0), TestRunStatus.Completed);
             aRun.Results.Add(new TestStepResultModel(1, TestStepStatus.Pass) { Procedure = "Navigate to the application login screen.", ExpectedResult = "Login form is displayed with Username and Password fields." });
             aRun.Results.Add(new TestStepResultModel(2, TestStepStatus.Pass) { Procedure = "Navigate to the application login screen.", ExpectedResult = "Login form is displayed with Username and Password fields." });
             aRun.Results.Add(new TestStepResultModel(3, TestStepStatus.Pass) { Procedure = "Enter valid `username` and `password` from Test Data.", ExpectedResult = "Characters are masked in the password field. Login button becomes active." });
@@ -214,7 +216,7 @@ public class MarkdownReadAndWriteImplV1Test
         aModel.MetaData.Author = "Author";
         aModel.MetaData.Date = new DateOnly(2020, 01, 01);
         
-        var aRun = new TestRun(new DateOnly(2021, 01, 01));
+        var aRun = new TestRun(new DateTime(2021, 01, 01, 14, 30, 0), TestRunStatus.Completed);
         string noteWithNewline = "Note 1\nLine 2";
         aRun.Results.Add(new TestStepResultModel(1, TestStepStatus.Pass) { Note = noteWithNewline });
         aModel.TestRuns.Add(aRun);

@@ -39,7 +39,7 @@ public class TestCaseModelTest
             TestData = "Data"
         };
         tc.Steps.Add(new TestStepModel(1, "Proc", "Result"));
-        var run = new TestRun(DateOnly.FromDateTime(DateTime.Now));
+        var run = new TestRun(DateTime.Now);
         run.Results.Add(new TestStepResultModel(1, TestStepStatus.Pass));
         tc.TestRuns.Add(run);
 

@@ -226,7 +226,7 @@ public partial class ProjectDetailsViewModel : ViewModelBase
             return;
         }
 
-        var aRun = new TestRun(DateOnly.FromDateTime(DateTime.Now));
+        var aRun = new TestRun(DateTime.Now);
         foreach (TestStepResultModel result in ActiveRunSteps)
         {
             aRun.Results.Add(result);

@@ -38,7 +38,7 @@
 
 ## Run History
 
-### Run-2: 01-Jan-2021
+### Run-2: 01-Jan-2021 14:30 +5:30, Completed
 
 | Step | Status  | Notes           | Procedure                                             | Expected Result                                                           |
 | ---- | ------- | --------------- | ----------------------------------------------------- | ------------------------------------------------------------------------- |
@@ -47,7 +47,7 @@
 | 3    | Started |                 | Enter valid `username` and `password` from Test Data. | Characters are masked in the password field. Login button becomes active. |
 | 4    | Pending |                 | Click the "Login" button.                             | User is redirected to the dashboard. Session token is stored locally.     |
 
-### Run-1: 01-Jan-2020
+### Run-1: 01-Jan-2020 09:00 +5:30, Completed
 
 | Step | Status | Notes | Procedure                                             | Expected Result                                                           |
 | ---- | ------ | ----- | ----------------------------------------------------- | ------------------------------------------------------------------------- |

@@ -76,13 +76,15 @@ Dataset
 | ---- | --------- | --------------- |
 | 1    | Proc      | Result          |
 ## Run History
-### Run-2: 01-Jan-2021
-| 1 | Pass | |
+### Run-2: 01-Jan-2021 14:30 +5:30, Completed
+| Step | Status | Notes | Procedure | Expected Result |
+| ---- | ------ | ----- | --------- | --------------- |
+| 1    | Pass   |       | Proc      | Result          |
 
-### Run-1: 01-Jan-2020
-| 1 | Pass | |
-
-### Run-Dummy: 01-Jan-2019
+### Run-1: 01-Jan-2020 09:00 +5:30, Completed
+| Step | Status | Notes | Procedure | Expected Result |
+| ---- | ------ | ----- | --------- | --------------- |
+| 1    | Pass   |       | Proc      | Result          |
 
 #### Internal Program Data [DO NOT CHANGE OR REMOVE]
 > SchemaVersion: SSTM1";

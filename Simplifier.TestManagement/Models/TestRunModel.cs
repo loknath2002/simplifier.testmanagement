@@ -78,10 +78,14 @@ public partial class TestRun : ObservableValidator
     private ObservableCollection<TestStepResultModel> _Results = [];
 
     [ObservableProperty]
-    private DateOnly _When = DateOnly.FromDateTime(DateTime.Now);
+    private DateTimeOffset _When = DateTimeOffset.Now;
 
-    public TestRun(DateOnly theWhen)
+    [ObservableProperty]
+    private TestRunStatus _Status = TestRunStatus.Started;
+
+    public TestRun(DateTimeOffset theWhen, TestRunStatus theStatus = TestRunStatus.Started)
     {
         When = theWhen;
+        Status = theStatus;
     }
 }

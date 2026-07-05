@@ -58,7 +58,7 @@ public static class TestCaseExtensions
 
         foreach (var run in original.TestRuns)
         {
-            var runCopy = new TestRun(run.When);
+            var runCopy = new TestRun(run.When, run.Status);
             foreach (var result in run.Results)
             {
                 runCopy.Results.Add(new TestStepResultModel(result.StepNumber, result.Status)
