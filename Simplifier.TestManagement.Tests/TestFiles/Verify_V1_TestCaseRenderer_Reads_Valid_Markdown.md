@@ -38,16 +38,15 @@
 
 ## Run History
 
-### Run-2: 01-Jan-2021 14:30 +5:30, Completed
+### Run-2: 01-Jan-2021 14:30 +05:30, Completed
 
 | Step | Status  | Notes           | Procedure                                             | Expected Result                                                           |
 | ---- | ------- | --------------- | ----------------------------------------------------- | ------------------------------------------------------------------------- |
 | 1    | Pass    |                 | Navigate to the application login screen.             | Login form is displayed with Username and Password fields.                |
 | 2    | Fail    | 2nd login fails | Navigate to the application login screen.             | Login form is displayed with Username and Password fields.                |
 | 3    | Started |                 | Enter valid `username` and `password` from Test Data. | Characters are masked in the password field. Login button becomes active. |
-| 4    | Pending |                 | Click the "Login" button.                             | User is redirected to the dashboard. Session token is stored locally.     |
 
-### Run-1: 01-Jan-2020 09:00 +5:30, Completed
+### Run-1: 01-Jan-2020 09:00 +05:30, Completed
 
 | Step | Status | Notes | Procedure                                             | Expected Result                                                           |
 | ---- | ------ | ----- | ----------------------------------------------------- | ------------------------------------------------------------------------- |

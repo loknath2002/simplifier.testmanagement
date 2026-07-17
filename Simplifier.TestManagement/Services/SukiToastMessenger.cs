@@ -4,26 +4,40 @@ using SukiUI.Toasts;
 
 namespace Simplifier.TestManagement.Services;
 
+using Avalonia.Threading;
+
 public class SukiToastMessenger(ISukiToastManager myToastManager) : IToastMessenger
 {
 
     public void Info(string theTitle, string theMessage, TimeSpan? theTimeout = null)
     {
-        myToastManager.CreateToast().Dismiss().After(theTimeout ?? TimeSpan.FromSeconds(4)).WithTitle(theTitle).WithContent(theMessage).OfType(NotificationType.Information).Queue();
+        Dispatcher.UIThread.Invoke(() =>
+        {
+            myToastManager.CreateToast().Dismiss().After(theTimeout ?? TimeSpan.FromSeconds(4)).WithTitle(theTitle).WithContent(theMessage).OfType(NotificationType.Information).Queue();
+        });
     }
 
     public void Error(string theTitle, string theMessage, TimeSpan? theTimeout = null)
     {
-        myToastManager.CreateToast().Dismiss().After(theTimeout ?? TimeSpan.FromSeconds(4)).WithTitle(theTitle).WithContent(theMessage).OfType(NotificationType.Error).Queue();
+        Dispatcher.UIThread.Invoke(() =>
+        {
+            myToastManager.CreateToast().Dismiss().After(theTimeout ?? TimeSpan.FromSeconds(4)).WithTitle(theTitle).WithContent(theMessage).OfType(NotificationType.Error).Queue();
+        });
     }
 
     public void Warning(string theTitle, string theMessage, TimeSpan? theTimeout = null)
     {
-        myToastManager.CreateToast().Dismiss().After(theTimeout ?? TimeSpan.FromSeconds(4)).WithTitle(theTitle).WithContent(theMessage).OfType(NotificationType.Warning).Queue();
+        Dispatcher.UIThread.Invoke(() =>
+        {
+            myToastManager.CreateToast().Dismiss().After(theTimeout ?? TimeSpan.FromSeconds(4)).WithTitle(theTitle).WithContent(theMessage).OfType(NotificationType.Warning).Queue();
+        });
     }
 
     public void Success(string theTitle, string theMessage, TimeSpan? theTimeout = null)
     {
-        myToastManager.CreateToast().Dismiss().After(theTimeout ?? TimeSpan.FromSeconds(4)).WithTitle(theTitle).WithContent(theMessage).OfType(NotificationType.Success).Queue();
+        Dispatcher.UIThread.Invoke(() =>
+        {
+            myToastManager.CreateToast().Dismiss().After(theTimeout ?? TimeSpan.FromSeconds(4)).WithTitle(theTitle).WithContent(theMessage).OfType(NotificationType.Success).Queue();
+        });
     }
 }
