@@ -1,6 +1,5 @@
 ﻿// /*
-// * Copyright (c) 2026 Loknath, Quantum Technology
-// * All rights reserved.
+// * Copyright (c) 2026 Loknath
 // */
 using System;
 using System.Collections.Generic;

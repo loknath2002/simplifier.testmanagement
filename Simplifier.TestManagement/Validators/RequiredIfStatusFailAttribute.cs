@@ -1,6 +1,5 @@
 // /*
-// * Copyright (c) 2026 Loknath, Quantum Technology
-// * All rights reserved.
+// * Copyright (c) 2026 Loknath
 // */
 using System.ComponentModel.DataAnnotations;
 using Simplifier.TestManagement.Models;

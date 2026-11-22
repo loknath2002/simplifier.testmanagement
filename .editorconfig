@@ -127,7 +127,6 @@ dotnet_style_qualification_for_field = false:suggestion
 dotnet_style_qualification_for_method = false:suggestion
 dotnet_style_qualification_for_property = false:suggestion
 dotnet_style_require_accessibility_modifiers = for_non_interface_members:suggestion
-file_header_template = /*\n* Copyright (c) ${CurrentDate.Year} Loknath, Quantum Technology\n* All rights reserved.\n*/
 
 # ReSharper properties
 resharper_autodetect_indent_settings = true

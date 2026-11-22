@@ -1,6 +1,5 @@
 ﻿// /*
-// * Copyright (c) 2026 Loknath, Quantum Technology
-// * All rights reserved.
+// * Copyright (c) 2026 Loknath
 // */
 using System;
 using System.IO;
@@ -105,7 +104,7 @@ public class MarkdownReadAndWriteImplV1Test
         aModel.Steps.Add(new TestStepModel(){ Number = 4, Procedure = "Click the \"Login\" button.", ExpectedResult = "User is redirected to the dashboard. Session token is stored locally."});
 
         {
-            var aRun = new TestRun(new DateTime(2021, 01, 01, 14, 30, 0), TestRunStatus.Completed);
+            var aRun = new TestRun(new DateTimeOffset(2021, 01, 01, 14, 30, 0, TimeSpan.FromMinutes(330)), TestRunStatus.Completed);
             aRun.Results.Add(new TestStepResultModel(1, TestStepStatus.Pass) { Procedure = "Navigate to the application login screen.", ExpectedResult = "Login form is displayed with Username and Password fields." });
             aRun.Results.Add(new TestStepResultModel(2, TestStepStatus.Fail) { Note = "2nd login fails", Procedure = "Navigate to the application login screen.", ExpectedResult = "Login form is displayed with Username and Password fields." });
             aRun.Results.Add(new TestStepResultModel(3, TestStepStatus.Started) { Procedure = "Enter valid `username` and `password` from Test Data.", ExpectedResult = "Characters are masked in the password field. Login button becomes active." });
@@ -114,7 +113,7 @@ public class MarkdownReadAndWriteImplV1Test
         }
 
         {
-            var aRun = new TestRun(new DateTime(2020, 01, 01, 9, 0, 0), TestRunStatus.Completed);
+            var aRun = new TestRun(new DateTimeOffset(2020, 01, 01, 9, 0, 0, TimeSpan.FromMinutes(330)), TestRunStatus.Completed);
             aRun.Results.Add(new TestStepResultModel(1, TestStepStatus.Pass) { Procedure = "Navigate to the application login screen.", ExpectedResult = "Login form is displayed with Username and Password fields." });
             aRun.Results.Add(new TestStepResultModel(2, TestStepStatus.Pass) { Procedure = "Navigate to the application login screen.", ExpectedResult = "Login form is displayed with Username and Password fields." });
             aRun.Results.Add(new TestStepResultModel(3, TestStepStatus.Pass) { Procedure = "Enter valid `username` and `password` from Test Data.", ExpectedResult = "Characters are masked in the password field. Login button becomes active." });
