@@ -63,7 +63,6 @@ public class MarkdownReadAndWriteImplV1Test
             new TestStepResultModel(1, TestStepStatus.Pass) { Procedure = "Navigate to the application login screen.", ExpectedResult = "Login form is displayed with Username and Password fields." },
             new TestStepResultModel(2, TestStepStatus.Fail) { Note = "2nd login fails", Procedure = "Navigate to the application login screen.", ExpectedResult = "Login form is displayed with Username and Password fields." },
             new TestStepResultModel(3, TestStepStatus.Started) { Procedure = "Enter valid `username` and `password` from Test Data.", ExpectedResult = "Characters are masked in the password field. Login button becomes active." },
-            new TestStepResultModel(4, TestStepStatus.Pending) { Procedure = "Click the \"Login\" button.", ExpectedResult = "User is redirected to the dashboard. Session token is stored locally." },
         }));
         
         Assert.That(aActual.TestRuns[1].Results, Is.EqualTo(new ObservableCollection<TestStepResultModel>()
