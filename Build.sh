@@ -28,7 +28,7 @@ mkdir -p "${DIST_DIR}"
 build_platform() {
     local name="$1"
     local rid="$2"
-    local publish_dir="${DIST_DIR}/publish-${name}"
+    local package_dir="${DIST_DIR}/Simplifier.TestManagement-${VERSION}"
     local archive="${DIST_DIR}/Simplifier.TestManagement-${VERSION}-${name}.zip"
 
     echo ""
@@ -37,19 +37,17 @@ build_platform() {
         --configuration "${CONFIGURATION}" \
         --runtime "${rid}" \
         --self-contained true \
-        --output "${publish_dir}" \
+        --output "${package_dir}" \
         -p:DebugSymbols=false \
         -p:DebugType=None
 
     echo "Creating ${archive}"
-    local archive_path
-    archive_path="$(cd "${DIST_DIR}" && pwd)/$(basename "${archive}")"
     (
-        cd "${publish_dir}"
-        zip -r -q "${archive_path}" .
+        cd "${DIST_DIR}"
+        zip -r -q "$(basename "${archive}")" "$(basename "${package_dir}")"
     )
 
-    rm -rf "${publish_dir}"
+    rm -rf "${package_dir}"
 }
 
 build_platform "windows-x64" "win-x64"
