@@ -1,0 +1,313 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:suki="https://github.com/kikipoulet/SukiUI"
+             xmlns:sukiContent="clr-namespace:SukiUI.Content;assembly=SukiUI"
+             xmlns:vm="using:Simplifier.TestManagement.ViewModels"
+             xmlns:models="using:Simplifier.TestManagement.Models"
+             xmlns:converters="using:Simplifier.TestManagement.Converters"
+             mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
+             x:Class="Simplifier.TestManagement.Views.ProjectDetailsView"
+             x:DataType="vm:ProjectDetailsViewModel">
+    <UserControl.Resources>
+        <converters:DateOnlyToDateTimeOffsetConverter x:Key="DateOnlyToDateTimeOffsetConverter" />
+        <converters:CountToBooleanConverter x:Key="CountToBooleanConverter" />
+    </UserControl.Resources>
+    <DockPanel>
+        <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto, *, Auto" Margin="10">
+            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                <Border Width="30" Height="30" Background="Gray" CornerRadius="5" />
+                <StackPanel Margin="10,0" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding CurrentProject.Name}" FontWeight="Bold" FontSize="16" />
+                    <TextBlock Text="{Binding CurrentProject.DirectoryPath}" FontSize="12" Foreground="Gray" />
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Spacing="10">
+                <Button Classes="Rounded" Content="?" FontWeight="Bold"/>
+            </StackPanel>
+        </Grid>
+        <TabControl>
+        <TabItem Header="Organize">
+            <Grid
+                ColumnDefinitions="20*, 4, 80*">
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <ListBox ItemsSource="{Binding Tests}" SelectedItem="{Binding SelectedTestCase}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:TestCaseModel">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Id, StringFormat='TC-{0}'}" FontSize="10" />
+                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <Button Grid.Row="1" Content="Create New Test Case" Margin="10, 0, 10, 10" Command="{Binding CreateNewTestCaseCommand}"
+                            Classes="Success Rounded" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+                </Grid>
+                <GridSplitter Grid.Column="1" Background="Black" ResizeDirection="Columns" />
+                <Grid Grid.Column="2">
+                    <!-- Placeholder when no test case is selected -->
+                    <StackPanel IsVisible="{Binding SelectedTestCase, Converter={x:Static ObjectConverters.IsNull}}"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Spacing="20">
+                        <suki:GlassCard>
+                            <StackPanel Spacing="10" Margin="20">
+                                <TextBlock Text="No Test Case Selected"
+                                           FontSize="20"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center" />
+                                <TextBlock
+                                    Text="Please select a test case from the list on the left or create a new test."
+                                    TextWrapping="Wrap"
+                                    MaxWidth="400"
+                                    HorizontalAlignment="Center"
+                                    TextAlignment="Center"
+                                    Foreground="Gray" />
+                            </StackPanel>
+                        </suki:GlassCard>
+                    </StackPanel>
+
+                    <!-- Editor UI visible when a test case is selected -->
+                    <Grid RowDefinitions="25*, 75*"
+                          IsVisible="{Binding SelectedTestCase, Converter={x:Static ObjectConverters.IsNotNull}}">
+                        <Grid Grid.Row="0" Margin="10" ColumnDefinitions="*, *"
+                              RowDefinitions="Auto, Auto, Auto, Auto, *">
+                            <TextBox Grid.Row="0" Grid.Column="0" suki:TextBoxExtensions.Prefix="TC-"
+                                     PlaceholderText="Test ID (Required)"
+                                     Text="{Binding SelectedTestCase.Id}" Margin="5" />
+                            <TextBox Grid.Row="0" Grid.Column="1" PlaceholderText="Test Name (Required)"
+                                     Text="{Binding SelectedTestCase.Name}" Margin="5" />
+
+                            <TextBox Grid.Row="1" Grid.Column="0" PlaceholderText="Author"
+                                     Text="{Binding SelectedTestCase.MetaData.Author}" Margin="5" />
+                            <CalendarDatePicker Grid.Row="1" Grid.Column="1" PlaceholderText="Date"
+                                                SelectedDate="{Binding SelectedTestCase.MetaData.Date, Converter={StaticResource DateOnlyToDateTimeOffsetConverter}}"
+                                                HorizontalAlignment="Stretch" Margin="5" />
+
+                            <ComboBox Grid.Row="2" Grid.Column="0" PlaceholderText="Status"
+                                      ItemsSource="{Binding TestCaseStatuses}"
+                                      SelectedItem="{Binding SelectedTestCase.MetaData.Status}"
+                                      HorizontalAlignment="Stretch" />
+                            <TextBox Grid.Row="3" Grid.Column="0" PlaceholderText="Tags"
+                                     Text="{Binding SelectedTestCase.MetaData.TagsString}" Margin="5" />
+
+                            <TextBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" PlaceholderText="Description"
+                                     Text="{Binding SelectedTestCase.Description}" Margin="5" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap" />
+                        </Grid>
+                        <Grid Grid.Row="1" RowDefinitions="*, Auto">
+                            <TabControl Grid.Row="0" Margin="10" SelectedIndex="{Binding SelectedTabIndex}">
+                                <TabItem Header="Precondition &amp; Data">
+                                    <Grid ColumnDefinitions="*, *">
+                                        <TextBox Grid.Column="0" AcceptsReturn="True" VerticalContentAlignment="Top" TextWrapping="Wrap"
+                                                 PlaceholderText="Precondition/s"
+                                                 Text="{Binding SelectedTestCase.Precondition}" Margin="5" />
+                                        <TextBox Grid.Column="1" AcceptsReturn="True" VerticalContentAlignment="Top" TextWrapping="Wrap"
+                                                 PlaceholderText="Test Data"
+                                                 Text="{Binding SelectedTestCase.TestData}" Margin="5" />
+                                    </Grid>
+                                </TabItem>
+                                <TabItem Header="Steps">
+                                    <Grid RowDefinitions="*, Auto">
+                                        <StackPanel Grid.Row="0"
+                                                    IsVisible="{Binding SelectedTestCase.Steps.Count, Converter={StaticResource CountToBooleanConverter}}"
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Center"
+                                                    Spacing="20">
+                                            <suki:GlassCard>
+                                                <StackPanel Spacing="10" Margin="20">
+                                                    <TextBlock Text="No Steps Added"
+                                                               FontSize="20"
+                                                               FontWeight="Bold"
+                                                               HorizontalAlignment="Center" />
+                                                    <TextBlock Text="Use the Add Step button below to add your first step."
+                                                               TextWrapping="Wrap"
+                                                               MaxWidth="400"
+                                                               HorizontalAlignment="Center"
+                                                               TextAlignment="Center"
+                                                               Foreground="Gray" />
+                                                </StackPanel>
+                                            </suki:GlassCard>
+                                        </StackPanel>
+                                        <ListBox Grid.Row="0" ItemsSource="{Binding SelectedTestCase.Steps}"
+                                                 IsVisible="{Binding SelectedTestCase.Steps.Count, Converter={StaticResource CountToBooleanConverter}, ConverterParameter=invert}">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate x:DataType="models:TestStepModel">
+                                                    <Grid ColumnDefinitions="Auto, *, *, Auto" Margin="5">
+                                                        <NumericUpDown Grid.Column="0" Value="{Binding Number}"  Increment="1"
+                                                                       Width="80" VerticalAlignment="Center" />
+                                                        <TextBox Grid.Column="1" Text="{Binding Procedure}"
+                                                                 VerticalContentAlignment="Top" PlaceholderText="Procedure" AcceptsReturn="True"
+                                                                 TextWrapping="Wrap" Margin="5,0" />
+                                                        <TextBox Grid.Column="2" Text="{Binding ExpectedResult}"
+                                                                 VerticalContentAlignment="Top" PlaceholderText="Expected Result" AcceptsReturn="True"
+                                                                 TextWrapping="Wrap" Margin="5,0" />
+                                                        <Button Grid.Column="3" Content="Delete" MaxHeight="36"
+                                                                Command="{Binding $parent[UserControl].((vm:ProjectDetailsViewModel)DataContext).RemoveStepCommand}"
+                                                                CommandParameter="{Binding}" Classes="Warning Rounded" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+                                    </Grid>
+                                </TabItem>
+                                <TabItem Header="Run History">
+                                    <Grid>
+                                        <StackPanel IsVisible="{Binding SelectedTestCase.TestRuns.Count, Converter={StaticResource CountToBooleanConverter}}"
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Center"
+                                                    Spacing="20">
+                                            <suki:GlassCard>
+                                                <StackPanel Spacing="10" Margin="20">
+                                                    <TextBlock Text="No Runs"
+                                                               FontSize="20"
+                                                               FontWeight="Bold"
+                                                               HorizontalAlignment="Center" />
+                                                    <TextBlock Text="There are no Runs, switch to Run tab to start a new run."
+                                                               TextWrapping="Wrap"
+                                                               MaxWidth="400"
+                                                               HorizontalAlignment="Center"
+                                                               TextAlignment="Center"
+                                                               Foreground="Gray" />
+                                                </StackPanel>
+                                            </suki:GlassCard>
+                                        </StackPanel>
+                                        <ListBox ItemsSource="{Binding SelectedTestCase.TestRuns}"
+                                                 IsVisible="{Binding SelectedTestCase.TestRuns.Count, Converter={StaticResource CountToBooleanConverter}, ConverterParameter=invert}">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate x:DataType="models:TestRun">
+                                                    <Expander ExpandDirection="Down" Header="{Binding When}">
+                                                        <ListBox ItemsSource="{Binding Results}">
+                                                            <ListBox.ItemTemplate>
+                                                                <DataTemplate x:DataType="models:TestStepResultModel">
+                                                                    <Grid ColumnDefinitions="Auto, *, *, Auto, *" Margin="5">
+                                                                        <TextBlock Grid.Column="0" Text="{Binding StepNumber}" VerticalAlignment="Center" Margin="5" />
+                                                                        <TextBox Grid.Column="1" Text="{Binding Procedure}" IsReadOnly="True" VerticalContentAlignment="Center" TextWrapping="Wrap" Margin="5" />
+                                                                        <TextBox Grid.Column="2" Text="{Binding ExpectedResult}" IsReadOnly="True" VerticalContentAlignment="Center" TextWrapping="Wrap" Margin="5" />
+                                                                        <ComboBox Grid.Column="3" ItemsSource="{Binding $parent[UserControl].((vm:ProjectDetailsViewModel)DataContext).TestStepStatuses}"
+                                                                                  SelectedItem="{Binding Status}" Margin="5" IsEnabled="False" />
+                                                                        <TextBox Grid.Column="4" Text="{Binding Note}" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" Margin="5" />
+                                                                    </Grid>
+                                                                </DataTemplate>
+                                                            </ListBox.ItemTemplate>
+                                                        </ListBox>
+                                                    </Expander>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+                                    </Grid>
+                                </TabItem>
+                            </TabControl>
+                            <Grid Grid.Row="1" Margin="25, 0, 25, 10" ColumnDefinitions="Auto, *, Auto">
+                                <Button Grid.Column="0" Content="Delete" Classes="Danger Rounded" Command="{Binding DeleteTestCaseCommand}" />
+                                <Button Grid.Column="1" Content="+ Add Step" Command="{Binding AddStepCommand}" Classes="Flat" HorizontalAlignment="Center" IsVisible="{Binding IsAddStepVisible}" />
+                                <Button Grid.Column="2" Content="Save" Classes="Flat Rounded" Command="{Binding SaveTestCaseCommand}" />
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Run Test/s">
+            <Grid ColumnDefinitions="20*, 4, 80*">
+                <Grid Grid.Column="0">
+                    <ListBox ItemsSource="{Binding Tests}" SelectedItem="{Binding SelectedRunTestCase}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:TestCaseModel">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Id, StringFormat='TC-{0}'}" FontSize="10" />
+                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+                <GridSplitter Grid.Column="1" Background="Black" ResizeDirection="Columns" />
+                <Grid Grid.Column="2">
+                    <!-- Placeholder when no test case is selected -->
+                    <StackPanel IsVisible="{Binding SelectedRunTestCase, Converter={x:Static ObjectConverters.IsNull}}"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Spacing="20">
+                        <suki:GlassCard>
+                            <StackPanel Spacing="10" Margin="20">
+                                <TextBlock Text="No Test Case Selected"
+                                           FontSize="20"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center" />
+                                <TextBlock Text="Please select a test case from the list on the left to start a run."
+                                           TextWrapping="Wrap"
+                                           MaxWidth="400"
+                                           HorizontalAlignment="Center"
+                                           TextAlignment="Center"
+                                           Foreground="Gray" />
+                            </StackPanel>
+                        </suki:GlassCard>
+                    </StackPanel>
+
+                    <!-- Run UI visible when a test case is selected -->
+                    <Grid RowDefinitions="*, Auto"
+                          IsVisible="{Binding SelectedRunTestCase, Converter={x:Static ObjectConverters.IsNotNull}}">
+
+                        <!-- Empty steps placeholder -->
+                        <StackPanel Grid.Row="0"
+                                    IsVisible="{Binding ActiveRunSteps.Count, Converter={StaticResource CountToBooleanConverter}}"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                    Spacing="20">
+                            <suki:GlassCard>
+                                <StackPanel Spacing="10" Margin="20">
+                                    <TextBlock Text="No Steps Found"
+                                               FontSize="20"
+                                               FontWeight="Bold"
+                                               HorizontalAlignment="Center" />
+                                    <TextBlock Text="The selected test case has no steps. Go to the Organize tab to add steps before running."
+                                               TextWrapping="Wrap"
+                                               MaxWidth="400"
+                                               HorizontalAlignment="Center"
+                                               TextAlignment="Center"
+                                               Foreground="Gray" />
+                                </StackPanel>
+                            </suki:GlassCard>
+                        </StackPanel>
+
+                        <!-- Steps list -->
+                        <ListBox Grid.Row="0"
+                                 ItemsSource="{Binding ActiveRunSteps}"
+                                 IsVisible="{Binding ActiveRunSteps.Count, Converter={StaticResource CountToBooleanConverter}, ConverterParameter=invert}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate x:DataType="models:TestStepResultModel">
+                                    <Grid ColumnDefinitions="Auto, *, *, Auto, *" Margin="5">
+                                        <TextBlock Grid.Column="0" Text="{Binding StepNumber}" VerticalAlignment="Center" Margin="5" Width="30" />
+                                        <TextBox Grid.Column="1" Text="{Binding Procedure}" IsReadOnly="True"
+                                                 VerticalContentAlignment="Top" TextWrapping="Wrap" Margin="5" />
+                                        <TextBox Grid.Column="2" Text="{Binding ExpectedResult}" IsReadOnly="True"
+                                                 VerticalContentAlignment="Top" TextWrapping="Wrap" Margin="5" />
+                                        <ComboBox Grid.Column="3"
+                                                  ItemsSource="{Binding $parent[UserControl].((vm:ProjectDetailsViewModel)DataContext).TestStepStatuses}"
+                                                  SelectedItem="{Binding Status}" Margin="5" />
+                                        <TextBox Grid.Column="4" Text="{Binding Note}" AcceptsReturn="True"
+                                                 VerticalContentAlignment="Top" PlaceholderText="Notes"
+                                                 TextWrapping="Wrap" Margin="5" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <Grid Grid.Row="1" Margin="25, 0, 25, 10" ColumnDefinitions="*, Auto">
+                            <Button Grid.Column="1" Content="Save Run" Classes="Success Rounded"
+                                    Command="{Binding SaveRunCommand}"
+                                    IsEnabled="{Binding ActiveRunSteps.Count, Converter={StaticResource CountToBooleanConverter}, ConverterParameter=invert}" />
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </TabItem>
+    </TabControl>
+    </DockPanel>
+</UserControl>

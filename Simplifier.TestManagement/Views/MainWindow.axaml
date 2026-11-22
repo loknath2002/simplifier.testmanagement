@@ -1,0 +1,22 @@
+<suki:SukiWindow xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Simplifier.TestManagement.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:suki="https://github.com/kikipoulet/SukiUI"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Simplifier.TestManagement.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        WindowState="Maximized"
+        Title="Simplifier.TestManagement">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <TransitioningContentControl Content="{Binding CurrentPage}" />
+        <suki:SukiToastHost Name="ToastHost" Position="TopRight"/>
+        <suki:SukiDialogHost Name="DialogHost"/>
+    </Grid>
+</suki:SukiWindow>
