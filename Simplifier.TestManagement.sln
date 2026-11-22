@@ -4,6 +4,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simplifier.TestManagement",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simplifier.TestManagement.Tests", "Simplifier.TestManagement.Tests\Simplifier.TestManagement.Tests.csproj", "{00760EDA-516C-410D-9B5D-B6EF5CD924F9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{E1B10C85-B396-4AB0-9ED6-A2086729AF40}"
+	ProjectSection(SolutionItems) = preProject
+		Build.sh = Build.sh
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
